@@ -1,6 +1,76 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../firebase';
 
 export default function RegistrationSection() {
+    const [isLoading, setIsLoading] = useState(false);
+    const [formData, setFormData] = useState({
+        applicantName: '',
+        mobile: '',
+        email: '',
+        officeAddress: '',
+        pincode: '',
+        state: '',
+        district: '',
+        socialCategory: '',
+        orgType: '',
+        pan: '',
+        bankAccount: '',
+        ifsc: '',
+        businessName: '',
+        commencementDate: '',
+        mainActivity: '',
+        additionalDetails: '',
+        employeesMale: '',
+        employeesFemale: '',
+        employeesOther: '',
+        verificationCode: ''
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const calculateTotalEmployees = () => {
+        return (parseInt(formData.employeesMale || 0) + parseInt(formData.employeesFemale || 0) + parseInt(formData.employeesOther || 0));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+
+        try {
+            // Generate a random Application ID
+            const appId = `UDYAM-${Math.floor(Math.random() * 10000000)}`;
+
+            await addDoc(collection(db, "registrations"), {
+                ...formData,
+                totalEmployees: calculateTotalEmployees(),
+                paymentStatus: 'Pending',
+                step: 1, // Default step
+                id: appId,
+                date: new Date().toISOString().split('T')[0],
+                timestamp: serverTimestamp()
+            });
+
+            alert(`Application Submitted Successfully! Your Application ID is ${appId}. Please note it for future reference.`);
+            // Reset form
+            setFormData({
+                applicantName: '', mobile: '', email: '', officeAddress: '', pincode: '', state: '', district: '',
+                socialCategory: '', orgType: '', pan: '', bankAccount: '', ifsc: '', businessName: '',
+                commencementDate: '', mainActivity: '', additionalDetails: '',
+                employeesMale: '', employeesFemale: '', employeesOther: '', verificationCode: ''
+            });
+
+        } catch (error) {
+            console.error("Error submitting document: ", error);
+            alert("Error submitting application. Please try again.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <section className="container mx-auto px-2 py-8 grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch font-sans">
 
@@ -12,47 +82,58 @@ export default function RegistrationSection() {
                     <span className="text-xs font-normal opacity-90">उद्यम पंजीकरण फॉर्म ऑनलाइन</span>
                 </div>
 
-                <form className="p-4 space-y-4 text-xs md:text-sm bg-white">
+                <form onSubmit={handleSubmit} className="p-4 space-y-4 text-xs md:text-sm bg-white">
                     {/* Row 1: Name */}
                     <div className="bg-[#fffbef] p-3 border border-orange-200 rounded-sm">
                         <label className="block text-gray-800 font-bold mb-1">APPLICANT NAME / आवेदक का नाम <span className="text-red-600">*</span></label>
-                        <input type="text" className="w-full border border-gray-300 px-2 py-1.5 bg-[#fffaf4] focus:outline-none focus:border-blue-500 rounded-sm" />
+                        <input name="applicantName" value={formData.applicantName} onChange={handleChange} required type="text" className="w-full border border-gray-300 px-2 py-1.5 bg-[#fffaf4] focus:outline-none focus:border-blue-500 rounded-sm" />
                     </div>
 
                     {/* Row 2: Mobile */}
                     <div className="bg-[#fffbef] p-3 border border-orange-200 rounded-sm">
                         <label className="block text-gray-800 font-bold mb-1">Mobile Number / मोबाइल संख्या <span className="text-red-600">*</span></label>
-                        <input type="tel" className="w-full border border-gray-300 px-2 py-1.5 bg-[#fffaf4] focus:outline-none focus:border-blue-500 rounded-sm" />
+                        <input name="mobile" value={formData.mobile} onChange={handleChange} required type="tel" className="w-full border border-gray-300 px-2 py-1.5 bg-[#fffaf4] focus:outline-none focus:border-blue-500 rounded-sm" />
                     </div>
 
                     {/* Row 3: Email */}
                     <div className="bg-[#fffbef] p-3 border border-orange-200 rounded-sm">
                         <label className="block text-gray-800 font-bold mb-1">Email Id / ईमेल आईडी <span className="text-red-600">*</span></label>
-                        <input type="email" className="w-full border border-gray-300 px-2 py-1.5 bg-[#fffaf4] focus:outline-none focus:border-blue-500 rounded-sm" />
+                        <input name="email" value={formData.email} onChange={handleChange} required type="email" className="w-full border border-gray-300 px-2 py-1.5 bg-[#fffaf4] focus:outline-none focus:border-blue-500 rounded-sm" />
                     </div>
 
                     {/* Row 4: Address */}
                     <div className="bg-[#fffbef] p-3 border border-orange-200 rounded-sm">
                         <label className="block text-gray-800 font-bold mb-1">Office Address / कार्यालय का पता <span className="text-red-600">*</span></label>
-                        <input type="text" className="w-full border border-gray-300 px-2 py-1.5 mb-2 bg-[#fffaf4] focus:outline-none focus:border-blue-500 rounded-sm" />
+                        <input name="officeAddress" value={formData.officeAddress} onChange={handleChange} required type="text" className="w-full border border-gray-300 px-2 py-1.5 mb-2 bg-[#fffaf4] focus:outline-none focus:border-blue-500 rounded-sm" />
                     </div>
 
                     {/* Row 5: Pincode, State, District */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-[#fffbef] p-3 border border-orange-200 rounded-sm">
                         <div>
                             <label className="block text-gray-800 font-bold mb-1">Pincode / पिन कोड <span className="text-red-600">*</span></label>
-                            <input type="text" className="w-full border border-gray-300 px-2 py-1.5 bg-[#fffaf4] focus:outline-none focus:border-blue-500 rounded-sm" />
+                            <input name="pincode" value={formData.pincode} onChange={handleChange} required type="text" className="w-full border border-gray-300 px-2 py-1.5 bg-[#fffaf4] focus:outline-none focus:border-blue-500 rounded-sm" />
                         </div>
                         <div>
                             <label className="block text-gray-800 font-bold mb-1">State / राज्य <span className="text-red-600">*</span></label>
-                            <select className="w-full border border-gray-300 px-2 py-1.5 focus:outline-none focus:border-blue-500 bg-white rounded-sm">
-                                <option>Select State</option>
+                            <select name="state" value={formData.state} onChange={handleChange} required className="w-full border border-gray-300 px-2 py-1.5 focus:outline-none focus:border-blue-500 bg-white rounded-sm">
+                                <option value="">Select State</option>
+                                <option value="Maharashtra">Maharashtra</option>
+                                <option value="Delhi">Delhi</option>
+                                <option value="Gujarat">Gujarat</option>
+                                <option value="Karnataka">Karnataka</option>
+                                {/* Add more states as needed */}
                             </select>
                         </div>
                         <div>
                             <label className="block text-gray-800 font-bold mb-1">District / जिला <span className="text-red-600">*</span></label>
-                            <select className="w-full border border-gray-300 px-2 py-1.5 focus:outline-none focus:border-blue-500 bg-white rounded-sm">
-                                <option>Please select District</option>
+                            <select name="district" value={formData.district} onChange={handleChange} required className="w-full border border-gray-300 px-2 py-1.5 focus:outline-none focus:border-blue-500 bg-white rounded-sm">
+                                <option value="">Select District</option>
+                                <option value="Mumbai">Mumbai</option>
+                                <option value="Pune">Pune</option>
+                                <option value="New Delhi">New Delhi</option>
+                                <option value="Ahmedabad">Ahmedabad</option>
+                                <option value="Bangalore">Bangalore</option>
+                                {/* Add more districts as needed */}
                             </select>
                         </div>
                     </div>
@@ -61,14 +142,27 @@ export default function RegistrationSection() {
                     <div className="bg-[#fffbef] p-3 border border-orange-200 rounded-sm space-y-3">
                         <div>
                             <label className="block text-gray-800 font-bold mb-1">Social Category / सामाजिक श्रेणी <span className="text-red-600">*</span></label>
-                            <select className="w-full border border-gray-300 px-2 py-1.5 focus:outline-none focus:border-blue-500 bg-white rounded-sm">
-                                <option>--Select--</option>
+                            <select name="socialCategory" value={formData.socialCategory} onChange={handleChange} required className="w-full border border-gray-300 px-2 py-1.5 focus:outline-none focus:border-blue-500 bg-white rounded-sm">
+                                <option value="">--Select--</option>
+                                <option value="General">General</option>
+                                <option value="OBC">OBC</option>
+                                <option value="SC">SC</option>
+                                <option value="ST">ST</option>
                             </select>
                         </div>
                         <div>
                             <label className="block text-gray-800 font-bold mb-1">Type Of Organisation / संगठन का प्रकार <span className="text-red-600">*</span></label>
-                            <select className="w-full border border-gray-300 px-2 py-1.5 focus:outline-none focus:border-blue-500 bg-white rounded-sm">
-                                <option>--Select--</option>
+                            <select name="orgType" value={formData.orgType} onChange={handleChange} required className="w-full border border-gray-300 px-2 py-1.5 focus:outline-none focus:border-blue-500 bg-white rounded-sm">
+                                <option value="">--Select--</option>
+                                <option value="Proprietary">Proprietary</option>
+                                <option value="Hindu Undivided Family">Hindu Undivided Family</option>
+                                <option value="Partnership">Partnership</option>
+                                <option value="Co-Operative">Co-Operative</option>
+                                <option value="Private Limited Company">Private Limited Company</option>
+                                <option value="Public Limited Company">Public Limited Company</option>
+                                <option value="Self Help Group">Self Help Group</option>
+                                <option value="Trust">Trust</option>
+                                <option value="Society">Society</option>
                             </select>
                         </div>
                     </div>
@@ -76,37 +170,40 @@ export default function RegistrationSection() {
                     {/* Row 7: PAN */}
                     <div className="bg-[#fffbef] p-3 border border-orange-200 rounded-sm">
                         <label className="block text-gray-800 font-bold mb-1">Pan Card Number / पैन कार्ड नंबर <span className="text-red-600">*</span></label>
-                        <input type="text" className="w-full border border-gray-300 px-2 py-1.5 bg-[#fffaf4] focus:outline-none focus:border-blue-500 uppercase rounded-sm" />
+                        <input name="pan" value={formData.pan} onChange={handleChange} required type="text" className="w-full border border-gray-300 px-2 py-1.5 bg-[#fffaf4] focus:outline-none focus:border-blue-500 uppercase rounded-sm" />
                     </div>
 
                     {/* Row 8: Bank & IFSC (New) */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-[#fffbef] p-3 border border-orange-200 rounded-sm">
                         <div>
                             <label className="block text-gray-800 font-bold mb-1">Bank Account Number / बैंक खाता संख्या</label>
-                            <input type="text" className="w-full border border-gray-300 px-2 py-1.5 bg-[#fffaf4] focus:outline-none focus:border-blue-500 rounded-sm" />
+                            <input name="bankAccount" value={formData.bankAccount} onChange={handleChange} required type="text" className="w-full border border-gray-300 px-2 py-1.5 bg-[#fffaf4] focus:outline-none focus:border-blue-500 rounded-sm" />
                         </div>
                         <div>
                             <label className="block text-gray-800 font-bold mb-1">Ifsc Code / आईएफएससी कोड</label>
-                            <input type="text" className="w-full border border-gray-300 px-2 py-1.5 bg-[#fffaf4] focus:outline-none focus:border-blue-500 uppercase rounded-sm" />
+                            <input name="ifsc" value={formData.ifsc} onChange={handleChange} required type="text" className="w-full border border-gray-300 px-2 py-1.5 bg-[#fffaf4] focus:outline-none focus:border-blue-500 uppercase rounded-sm" />
                         </div>
                     </div>
 
                     {/* Row 9: Business Name */}
                     <div className="bg-[#fffbef] p-3 border border-orange-200 rounded-sm">
                         <label className="block text-gray-800 font-bold mb-1">Business Name / व्यवास्यक नाम</label>
-                        <input type="text" className="w-full border border-gray-300 px-2 py-1.5 bg-[#fffaf4] focus:outline-none focus:border-blue-500 rounded-sm" />
+                        <input name="businessName" value={formData.businessName} onChange={handleChange} required type="text" className="w-full border border-gray-300 px-2 py-1.5 bg-[#fffaf4] focus:outline-none focus:border-blue-500 rounded-sm" />
                     </div>
 
                     {/* Row 10: Date, Main Activity */}
                     <div className="bg-[#fffbef] p-3 border border-orange-200 rounded-sm space-y-3">
                         <div>
                             <label className="block text-gray-800 font-bold mb-1">Date Of Commencement Of Business / व्यवसाय के प्रारंभ होने की तिथि</label>
-                            <input type="date" className="w-full border border-gray-300 px-2 py-1.5 bg-[#fffaf4] focus:outline-none focus:border-blue-500 rounded-sm" placeholder="dd/mm/yyyy" />
+                            <input name="commencementDate" value={formData.commencementDate} onChange={handleChange} required type="date" className="w-full border border-gray-300 px-2 py-1.5 bg-[#fffaf4] focus:outline-none focus:border-blue-500 rounded-sm" />
                         </div>
                         <div>
                             <label className="block text-gray-800 font-bold mb-1">Main Business Activity Of Enterprise / उद्यम की मुख्य व्यावसायिक गतिविधि</label>
-                            <select className="w-full border border-gray-300 px-2 py-1.5 focus:outline-none focus:border-blue-500 bg-white rounded-sm">
-                                <option>--Select--</option>
+                            <select name="mainActivity" value={formData.mainActivity} onChange={handleChange} required className="w-full border border-gray-300 px-2 py-1.5 focus:outline-none focus:border-blue-500 bg-white rounded-sm">
+                                <option value="">--Select--</option>
+                                <option value="Manufacturing">Manufacturing</option>
+                                <option value="Services">Services</option>
+                                <option value="Trading">Trading</option>
                             </select>
                         </div>
                     </div>
@@ -114,7 +211,7 @@ export default function RegistrationSection() {
                     {/* Row 11: Additional Details (New) */}
                     <div className="bg-[#fffbef] p-3 border border-orange-200 rounded-sm">
                         <label className="block text-gray-800 font-bold mb-1">Additional Details About Business / व्यापार के बारे में अतिरिक्त विवरण</label>
-                        <input type="text" className="w-full border border-gray-300 px-2 py-1.5 bg-[#fffaf4] focus:outline-none focus:border-blue-500 rounded-sm" />
+                        <input name="additionalDetails" value={formData.additionalDetails} onChange={handleChange} type="text" className="w-full border border-gray-300 px-2 py-1.5 bg-[#fffaf4] focus:outline-none focus:border-blue-500 rounded-sm" />
                     </div>
 
                     {/* Row 12: Employees */}
@@ -123,19 +220,19 @@ export default function RegistrationSection() {
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                             <div>
                                 <span className="block text-xs mb-1">Male / पुरुष</span>
-                                <input type="number" className="w-full border border-gray-300 px-2 py-1 rounded-sm" />
+                                <input name="employeesMale" value={formData.employeesMale} onChange={handleChange} type="number" className="w-full border border-gray-300 px-2 py-1 rounded-sm" />
                             </div>
                             <div>
                                 <span className="block text-xs mb-1">Female / महिला</span>
-                                <input type="number" className="w-full border border-gray-300 px-2 py-1 rounded-sm" />
+                                <input name="employeesFemale" value={formData.employeesFemale} onChange={handleChange} type="number" className="w-full border border-gray-300 px-2 py-1 rounded-sm" />
                             </div>
                             <div>
                                 <span className="block text-xs mb-1">Other / अन्य</span>
-                                <input type="number" className="w-full border border-gray-300 px-2 py-1 rounded-sm" />
+                                <input name="employeesOther" value={formData.employeesOther} onChange={handleChange} type="number" className="w-full border border-gray-300 px-2 py-1 rounded-sm" />
                             </div>
                             <div>
                                 <span className="block text-xs mb-1">Total / संपूर्ण</span>
-                                <input type="number" className="w-full border border-gray-300 px-2 py-1 bg-gray-100 rounded-sm" readOnly />
+                                <input value={calculateTotalEmployees()} type="number" className="w-full border border-gray-300 px-2 py-1 bg-gray-100 rounded-sm" readOnly />
                             </div>
                         </div>
                     </div>
@@ -143,7 +240,7 @@ export default function RegistrationSection() {
                     {/* Agreement */}
                     <div className="bg-orange-100 p-3 border border-orange-200 rounded-sm">
                         <label className="flex items-start space-x-2">
-                            <input type="checkbox" className="mt-1 w-4 h-4 text-orange-600 focus:ring-orange-500" />
+                            <input type="checkbox" required className="mt-1 w-4 h-4 text-orange-600 focus:ring-orange-500" />
                             <span className="text-xs font-semibold text-gray-800">
                                 I AGREE TO THE <a href="#" className="text-blue-600 underline">TERMS OF SERVICE [UPDATED]</a>
                                 <br />
@@ -157,15 +254,15 @@ export default function RegistrationSection() {
                         <label className="block text-gray-800 font-bold text-xs">Verfication Code</label>
                         <div className="flex gap-2 items-center">
                             <div className="flex-grow max-w-[200px]">
-                                <input type="text" placeholder="Verification Code *" className="w-full border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:border-blue-500 rounded-sm" />
+                                <input name="verificationCode" value={formData.verificationCode} onChange={handleChange} type="text" placeholder="Verification Code *" className="w-full border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:border-blue-500 rounded-sm" />
                             </div>
                             {/* Captcha Placeholder */}
                             <div className="bg-black text-white px-4 py-2 font-mono tracking-widest text-lg font-bold">08222</div>
                         </div>
                     </div>
 
-                    <button type="button" className="bg-blue-600 text-white font-bold py-3 px-8 rounded shadow hover:bg-blue-700 w-full md:w-auto uppercase text-sm transition-colors">
-                        Submit Application
+                    <button type="submit" disabled={isLoading} className={`bg-blue-600 text-white font-bold py-3 px-8 rounded shadow hover:bg-blue-700 w-full md:w-auto uppercase text-sm transition-colors ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}>
+                        {isLoading ? 'Submitting...' : 'Submit Application'}
                     </button>
 
                 </form>
