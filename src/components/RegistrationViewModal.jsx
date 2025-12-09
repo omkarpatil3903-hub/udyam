@@ -1,8 +1,12 @@
 import React from 'react';
-import { X, Printer, FileText, User, MapPin, Building2, CreditCard, Users } from 'lucide-react';
+import { X, Printer, FileText, User, MapPin, Building2, CreditCard, Users, Clock, CheckCircle } from 'lucide-react';
 
-export default function RegistrationViewModal({ isOpen, onClose, data, onStatusUpdate }) {
+export default function RegistrationViewModal({ isOpen, onClose, data, onPaymentStatusUpdate, onWorkStatusUpdate }) {
     if (!isOpen || !data) return null;
+
+    // Handle backward compatibility
+    const isPaid = data.paymentStatus === 'Paid' || data.paymentStatus === 'Successful';
+    const isUnpaid = data.paymentStatus === 'Unpaid' || data.paymentStatus === 'Pending';
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
@@ -20,20 +24,33 @@ export default function RegistrationViewModal({ isOpen, onClose, data, onStatusU
                         </div>
                     </div>
                     <div className="flex items-center gap-4">
-                        {/* Status Update in Header */}
+                        {/* Payment Status */}
                         <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-gray-200 shadow-sm">
-                            <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Status:</span>
-                            <div className="relative">
+                            <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Payment:</span>
+                            <select
+                                value={isPaid ? 'Paid' : 'Unpaid'}
+                                onChange={(e) => onPaymentStatusUpdate(data.id, e.target.value)}
+                                className={`font-bold text-sm bg-transparent cursor-pointer outline-none ${isPaid ? 'text-emerald-600' : 'text-orange-600'}`}
+                            >
+                                <option value="Unpaid" className="text-orange-600 font-bold">Unpaid</option>
+                                <option value="Paid" className="text-emerald-600 font-bold">Paid</option>
+                            </select>
+                        </div>
+
+                        {/* Work Status (only show if paid) */}
+                        {isPaid && (
+                            <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-gray-200 shadow-sm">
+                                <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Work:</span>
                                 <select
-                                    value={data.paymentStatus}
-                                    onChange={(e) => onStatusUpdate(data.id, e.target.value)}
-                                    className={`font-bold text-sm bg-transparent cursor-pointer outline-none ${data.paymentStatus === 'Pending' ? 'text-orange-600' : 'text-emerald-600'}`}
+                                    value={data.workStatus || 'Pending'}
+                                    onChange={(e) => onWorkStatusUpdate(data.id, e.target.value)}
+                                    className={`font-bold text-sm bg-transparent cursor-pointer outline-none ${data.workStatus === 'Completed' ? 'text-emerald-600' : 'text-blue-600'}`}
                                 >
-                                    <option value="Pending" className="text-orange-600 font-bold">Pending</option>
-                                    <option value="Successful" className="text-emerald-600 font-bold">Successful</option>
+                                    <option value="Pending" className="text-blue-600 font-bold">Pending</option>
+                                    <option value="Completed" className="text-emerald-600 font-bold">Completed</option>
                                 </select>
                             </div>
-                        </div>
+                        )}
 
                         <div className="flex items-center gap-2">
                             <button
@@ -60,11 +77,21 @@ export default function RegistrationViewModal({ isOpen, onClose, data, onStatusU
                     <div className="mb-6 flex items-center justify-between bg-blue-50 p-4 rounded-lg border border-blue-100">
                         <div className="flex gap-8">
                             <div>
-                                <span className="text-xs font-bold text-blue-400 uppercase tracking-wider block mb-1">Status</span>
-                                <span className={`font-bold ${data.paymentStatus === 'Pending' ? 'text-orange-600' : 'text-emerald-600'}`}>
-                                    {data.paymentStatus}
+                                <span className="text-xs font-bold text-blue-400 uppercase tracking-wider block mb-1">Payment Status</span>
+                                <span className={`font-bold flex items-center gap-1 ${isPaid ? 'text-emerald-600' : 'text-orange-600'}`}>
+                                    {isPaid ? <CreditCard size={14} /> : <Clock size={14} />}
+                                    {isPaid ? 'Paid' : 'Unpaid'}
                                 </span>
                             </div>
+                            {isPaid && (
+                                <div>
+                                    <span className="text-xs font-bold text-blue-400 uppercase tracking-wider block mb-1">Work Status</span>
+                                    <span className={`font-bold flex items-center gap-1 ${data.workStatus === 'Completed' ? 'text-emerald-600' : 'text-blue-600'}`}>
+                                        {data.workStatus === 'Completed' ? <CheckCircle size={14} /> : <Clock size={14} />}
+                                        {data.workStatus || 'Pending'}
+                                    </span>
+                                </div>
+                            )}
                             <div>
                                 <span className="text-xs font-bold text-blue-400 uppercase tracking-wider block mb-1">Applied On</span>
                                 <span className="font-semibold text-gray-700">{data.date}</span>

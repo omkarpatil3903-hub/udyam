@@ -77,9 +77,8 @@ export default function RegistrationSection() {
             const registrationData = {
                 ...formData,
                 totalEmployees: calculateTotalEmployees(),
-                paymentStatus: 'Pending',
-                step: 1, // Default step
-                // id: appId, // Removed custom ID
+                paymentStatus: 'Unpaid',  // Unpaid or Paid
+                workStatus: 'Pending',     // Pending or Completed (relevant when Paid)
                 date: new Date().toISOString().split('T')[0],
                 timestamp: serverTimestamp()
             };

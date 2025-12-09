@@ -8,7 +8,7 @@ import RegistrationSection from './components/RegistrationSection';
 import UdyamDetails from './components/UdyamDetails';
 import StandardOperatingProcedure from './components/StandardOperatingProcedure';
 import Footer from './components/Footer';
-import AdminDashboard from './pages/AdminDashboard';
+import Applications from './pages/Applications';
 import AdminLogin from './pages/AdminLogin';
 
 // Layout component for the main website content
@@ -63,7 +63,7 @@ function App() {
           path="/admin"
           element={
             isAdminLoggedIn ? (
-              <AdminDashboard onLogout={handleLogout} />
+              <Applications onLogout={handleLogout} />
             ) : (
               <AdminLogin />
             )
