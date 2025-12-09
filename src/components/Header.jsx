@@ -63,7 +63,6 @@ export default function Header() {
 
                     {/* Nav Links */}
                     <nav className={`${isMenuOpen ? 'block' : 'hidden'} md:flex flex-col md:flex-row md:justify-center md:space-x-8 text-sm font-medium py-3 px-4 transition-all duration-300`}>
-                        <a href="#" className="block py-2 md:py-0 hover:text-orange-400 transition border-b md:border-none border-blue-800">Home</a>
                         <a href="#" className="block py-2 md:py-0 hover:text-orange-400 transition border-b md:border-none border-blue-800">Udyam Registration</a>
                         <a href="#" className="block py-2 md:py-0 hover:text-orange-400 transition border-b md:border-none border-blue-800">Udyam Re-Registration</a>
                         <a href="#" className="block py-2 md:py-0 hover:text-orange-400 transition border-b md:border-none border-blue-800">Update Certificate</a>

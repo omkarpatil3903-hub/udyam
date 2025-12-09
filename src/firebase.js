@@ -1,7 +1,11 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { 
+  getFirestore, 
+  initializeFirestore, 
+  setLogLevel 
+} from "firebase/firestore";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -24,7 +28,25 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
+
+// Enable debug logging for Firestore to see why it hangs
+// setLogLevel('debug');
+
+// Initialize Firestore with settings
+let db;
+try {
+  db = initializeFirestore(app, {
+    experimentalForceLongPolling: true, // Force long polling to bypass firewalls/proxies
+  });
+  // console.log("Firestore initialized with Long Polling.");
+} catch (error) {
+  // If already initialized (e.g. during HMR), use the existing instance
+  // Note: If the existing instance didn't have Long Polling, a hard refresh is needed.
+  db = getFirestore(app);
+  // console.log("Using existing Firestore instance.");
+}
+
+export { db };
 export const auth = getAuth(app);
-export const db = getFirestore(app);
 
 export default app;

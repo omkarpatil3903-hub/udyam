@@ -1,0 +1,179 @@
+import React from 'react';
+import { X, Printer, FileText, User, MapPin, Building2, CreditCard, Users } from 'lucide-react';
+
+export default function RegistrationViewModal({ isOpen, onClose, data, onStatusUpdate }) {
+    if (!isOpen || !data) return null;
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+            <div className="bg-white rounded-xl shadow-2xl w-full max-w-7xl max-h-[95vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200 border border-gray-100">
+
+                {/* Header */}
+                <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                    <div className="flex items-center gap-3">
+                        <div className="bg-blue-100 p-2 rounded-lg text-blue-600">
+                            <FileText size={20} />
+                        </div>
+                        <div>
+                            <h2 className="text-lg font-bold text-gray-800">Application Details</h2>
+                            <p className="text-xs text-gray-500 font-mono">ID: {data.id}</p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                        {/* Status Update in Header */}
+                        <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-gray-200 shadow-sm">
+                            <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Status:</span>
+                            <div className="relative">
+                                <select
+                                    value={data.paymentStatus}
+                                    onChange={(e) => onStatusUpdate(data.id, e.target.value)}
+                                    className={`font-bold text-sm bg-transparent cursor-pointer outline-none ${data.paymentStatus === 'Pending' ? 'text-orange-600' : 'text-emerald-600'}`}
+                                >
+                                    <option value="Pending" className="text-orange-600 font-bold">Pending</option>
+                                    <option value="Successful" className="text-emerald-600 font-bold">Successful</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => window.print()}
+                                className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                title="Print Details"
+                            >
+                                <Printer size={20} />
+                            </button>
+                            <button
+                                onClick={onClose}
+                                className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Content */}
+                <div className="flex-1 overflow-y-auto p-6 bg-white custom-scrollbar">
+
+                    {/* Status Banner */}
+                    <div className="mb-6 flex items-center justify-between bg-blue-50 p-4 rounded-lg border border-blue-100">
+                        <div className="flex gap-8">
+                            <div>
+                                <span className="text-xs font-bold text-blue-400 uppercase tracking-wider block mb-1">Status</span>
+                                <span className={`font-bold ${data.paymentStatus === 'Pending' ? 'text-orange-600' : 'text-emerald-600'}`}>
+                                    {data.paymentStatus}
+                                </span>
+                            </div>
+                            <div>
+                                <span className="text-xs font-bold text-blue-400 uppercase tracking-wider block mb-1">Applied On</span>
+                                <span className="font-semibold text-gray-700">{data.date}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                        {/* Section: Applicant Details */}
+                        <div className="space-y-4">
+                            <h3 className="text-sm font-bold text-gray-900 border-b pb-2 flex items-center gap-2">
+                                <User size={16} className="text-blue-500" /> Applicant Information
+                            </h3>
+                            <div className="grid grid-cols-1 gap-y-3 text-sm">
+                                <DetailRow label="Applicant Name" value={data.applicantName} />
+                                <DetailRow label="Mobile Number" value={data.mobile} />
+                                <DetailRow label="Email ID" value={data.email} />
+                                <DetailRow label="Social Category" value={data.socialCategory} />
+                                <DetailRow label="PAN Number" value={data.pan?.toUpperCase()} />
+                            </div>
+                        </div>
+
+                        {/* Section: Business Details */}
+                        <div className="space-y-4">
+                            <h3 className="text-sm font-bold text-gray-900 border-b pb-2 flex items-center gap-2">
+                                <Building2 size={16} className="text-orange-500" /> Enterprise Details
+                            </h3>
+                            <div className="grid grid-cols-1 gap-y-3 text-sm">
+                                <DetailRow label="Business Name" value={data.businessName} />
+                                <DetailRow label="Organization Type" value={data.orgType} />
+                                <DetailRow label="Commencement Date" value={data.commencementDate} />
+                                <DetailRow label="Main Activity" value={data.mainActivity} />
+                                <DetailRow label="Additional Details" value={data.additionalDetails} />
+                            </div>
+                        </div>
+
+                        {/* Section: Address */}
+                        <div className="space-y-4">
+                            <h3 className="text-sm font-bold text-gray-900 border-b pb-2 flex items-center gap-2">
+                                <MapPin size={16} className="text-red-500" /> Location
+                            </h3>
+                            <div className="grid grid-cols-1 gap-y-3 text-sm">
+                                <DetailRow label="Office Address" value={data.officeAddress} />
+                                <DetailRow label="District" value={data.district} />
+                                <DetailRow label="State" value={data.state} />
+                                <DetailRow label="Pincode" value={data.pincode} />
+                            </div>
+                        </div>
+
+                        {/* Section: Bank Info */}
+                        <div className="space-y-4">
+                            <h3 className="text-sm font-bold text-gray-900 border-b pb-2 flex items-center gap-2">
+                                <CreditCard size={16} className="text-green-500" /> Bank Details
+                            </h3>
+                            <div className="grid grid-cols-1 gap-y-3 text-sm">
+                                <DetailRow label="Bank Account" value={data.bankAccount} />
+                                <DetailRow label="IFSC Code" value={data.ifsc} />
+                            </div>
+                        </div>
+
+                        {/* Section: Employment */}
+                        <div className="space-y-4 md:col-span-2">
+                            <h3 className="text-sm font-bold text-gray-900 border-b pb-2 flex items-center gap-2">
+                                <Users size={16} className="text-purple-500" /> Employment Details
+                            </h3>
+                            <div className="flex gap-4 items-center">
+                                <div className="flex-1 bg-gray-50 p-3 rounded border border-gray-100 text-center">
+                                    <div className="text-xs text-gray-500 uppercase tracking-wider mb-1">Male</div>
+                                    <div className="font-bold text-gray-800 text-lg">{data.employeesMale || 0}</div>
+                                </div>
+                                <div className="flex-1 bg-gray-50 p-3 rounded border border-gray-100 text-center">
+                                    <div className="text-xs text-gray-500 uppercase tracking-wider mb-1">Female</div>
+                                    <div className="font-bold text-gray-800 text-lg">{data.employeesFemale || 0}</div>
+                                </div>
+                                <div className="flex-1 bg-gray-50 p-3 rounded border border-gray-100 text-center">
+                                    <div className="text-xs text-gray-500 uppercase tracking-wider mb-1">Other</div>
+                                    <div className="font-bold text-gray-800 text-lg">{data.employeesOther || 0}</div>
+                                </div>
+                                <div className="flex-1 bg-blue-50 p-3 rounded border border-blue-100 text-center">
+                                    <div className="text-xs text-blue-500 uppercase tracking-wider mb-1">Total</div>
+                                    <div className="font-bold text-blue-800 text-lg">{data.totalEmployees}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {/* Footer */}
+                <div className="bg-gray-50 border-t border-gray-200 p-4 flex justify-end">
+                    <button
+                        onClick={onClose}
+                        className="px-6 py-2 bg-white border border-gray-300 text-gray-700 font-bold rounded-lg hover:bg-gray-50 transition-colors shadow-sm text-sm"
+                    >
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function DetailRow({ label, value, fullWidth }) {
+    return (
+        <div className={`flex flex-col ${fullWidth ? 'md:col-span-2' : ''}`}>
+            <span className="text-xs text-gray-500 font-medium uppercase tracking-wide">{label}</span>
+            <span className="text-gray-900 font-semibold break-words">{value || 'N/A'}</span>
+        </div>
+    );
+}

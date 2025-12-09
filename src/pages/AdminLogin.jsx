@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Lock, User, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Lock, Mail, ArrowRight, LayoutDashboard, Eye, EyeOff } from 'lucide-react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
 
@@ -8,6 +8,7 @@ export default function AdminLogin({ onLogin }) {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -16,8 +17,6 @@ export default function AdminLogin({ onLogin }) {
 
         try {
             await signInWithEmailAndPassword(auth, email, password);
-            // onLogin is handled by the auth state listener in App.jsx, but we can call it if needed for local state update optimization
-            // or just rely on the listener.
             if (onLogin) onLogin();
         } catch (err) {
             console.error(err);
@@ -33,85 +32,161 @@ export default function AdminLogin({ onLogin }) {
     };
 
     return (
-        <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
-            {/* Background decorations */}
-            <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/20 rounded-full blur-[100px]"></div>
-                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-orange-600/20 rounded-full blur-[100px]"></div>
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 flex">
+            {/* Left Side - Branding */}
+            <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
+                {/* Background Pattern */}
+                <div className="absolute inset-0 opacity-10">
+                    <div className="absolute top-20 left-20 w-72 h-72 border border-white/20 rounded-full"></div>
+                    <div className="absolute top-40 left-40 w-96 h-96 border border-white/10 rounded-full"></div>
+                    <div className="absolute bottom-20 right-20 w-64 h-64 border border-white/20 rounded-full"></div>
+                </div>
+
+                {/* Gradient Blobs */}
+                <div className="absolute top-0 left-0 w-96 h-96 bg-blue-600/30 rounded-full blur-[120px]"></div>
+                <div className="absolute bottom-0 right-0 w-96 h-96 bg-orange-500/20 rounded-full blur-[120px]"></div>
+
+                {/* Content */}
+                <div className="relative z-10 flex flex-col justify-center px-16">
+                    <div className="flex items-center gap-4 mb-8">
+                        <div className="w-14 h-14 bg-gradient-to-br from-orange-400 to-orange-600 rounded-2xl flex items-center justify-center shadow-2xl shadow-orange-500/30">
+                            <LayoutDashboard className="text-white" size={28} />
+                        </div>
+                        <div>
+                            <h1 className="text-3xl font-bold text-white tracking-tight">UDYAM</h1>
+                            <p className="text-sm text-slate-400 tracking-widest uppercase">Admin Portal</p>
+                        </div>
+                    </div>
+
+                    <h2 className="text-4xl font-bold text-white leading-tight mb-4">
+                        Manage Registrations<br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Effortlessly</span>
+                    </h2>
+
+                    <p className="text-slate-400 text-lg max-w-md">
+                        Access the control panel to review, approve, and manage UDYAM registration applications.
+                    </p>
+                    {/* 
+                    <div className="mt-12 flex items-center gap-6">
+                        <div className="text-center">
+                            <p className="text-3xl font-black text-white">500+</p>
+                            <p className="text-xs text-slate-500 uppercase tracking-wider">Applications</p>
+                        </div>
+                        <div className="w-px h-12 bg-slate-700"></div>
+                        <div className="text-center">
+                            <p className="text-3xl font-black text-white">98%</p>
+                            <p className="text-xs text-slate-500 uppercase tracking-wider">Approval Rate</p>
+                        </div>
+                        <div className="w-px h-12 bg-slate-700"></div>
+                        <div className="text-center">
+                            <p className="text-3xl font-black text-white">24/7</p>
+                            <p className="text-xs text-slate-500 uppercase tracking-wider">Availability</p>
+                        </div>
+                    </div> */}
+                </div>
             </div>
 
-            <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden z-10 relative">
-                <div className="p-8 pb-6 text-center border-b border-gray-100">
-                    <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <ShieldCheck size={32} className="text-blue-600" />
+            {/* Right Side - Login Form */}
+            <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
+                <div className="w-full max-w-md">
+                    {/* Mobile Logo */}
+                    <div className="lg:hidden flex items-center justify-center gap-3 mb-8">
+                        <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/30">
+                            <LayoutDashboard className="text-white" size={24} />
+                        </div>
+                        <div>
+                            <h1 className="text-2xl font-bold text-white">UDYAM</h1>
+                            <p className="text-[10px] text-slate-400 tracking-widest uppercase">Admin Portal</p>
+                        </div>
                     </div>
-                    <h2 className="text-2xl font-bold text-gray-800 tracking-tight">Admin Portal</h2>
-                    <p className="text-sm text-gray-500 mt-1">Sign in to access the control panel</p>
-                </div>
 
-                <div className="p-8 pt-6">
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        {error && (
-                            <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-lg flex items-center gap-2 animate-pulse">
-                                <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" fillRule="evenodd"></path></svg>
-                                {error}
+                    <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
+                        <div className="p-8">
+                            <div className="text-center mb-8">
+                                <h2 className="text-2xl font-bold text-gray-900">Welcome Back</h2>
+                                <p className="text-sm text-gray-500 mt-1">Sign in to your admin account</p>
                             </div>
-                        )}
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-semibold text-gray-700 ml-1">Email Address</label>
-                            <div className="relative">
-                                <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                                <input
-                                    type="email"
-                                    required
-                                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
-                                    placeholder="Enter your email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                />
-                            </div>
+                            <form onSubmit={handleSubmit} className="space-y-5">
+                                {error && (
+                                    <div className="bg-red-50 border border-red-100 text-red-600 text-sm px-4 py-3 rounded-xl flex items-center gap-2">
+                                        <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                        </svg>
+                                        {error}
+                                    </div>
+                                )}
+
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+                                    <div className="relative">
+                                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                                        <input
+                                            type="email"
+                                            required
+                                            className="w-full pl-12 pr-4 py-3.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all bg-gray-50 focus:bg-white text-gray-900"
+                                            placeholder="Enter Your Email"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+                                    <div className="relative">
+                                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                                        <input
+                                            type={showPassword ? "text" : "password"}
+                                            required
+                                            className="w-full pl-12 pr-12 py-3.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all bg-gray-50 focus:bg-white text-gray-900"
+                                            placeholder="••••••••••"
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                                        >
+                                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    disabled={isLoading}
+                                    className={`w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 ${isLoading ? 'opacity-70 cursor-not-allowed' : 'hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-0.5'}`}
+                                >
+                                    {isLoading ? (
+                                        <>
+                                            <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
+                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                            Signing in...
+                                        </>
+                                    ) : (
+                                        <>
+                                            Sign In
+                                            <ArrowRight size={18} />
+                                        </>
+                                    )}
+                                </button>
+                            </form>
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-semibold text-gray-700 ml-1">Password</label>
-                            <div className="relative">
-                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                                <input
-                                    type="password"
-                                    required
-                                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
-                                    placeholder="Enter your password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                />
-                            </div>
+                        <div className="bg-gray-50 px-8 py-4 border-t border-gray-100">
+                            <p className="text-xs text-gray-400 text-center">
+                                🔒 Secure Login • Authorized Personnel Only
+                            </p>
                         </div>
+                    </div>
 
-                        <button
-                            type="submit"
-                            disabled={isLoading}
-                            className={`w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2 ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
-                        >
-                            {isLoading ? (
-                                <>
-                                    <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                    Validating...
-                                </>
-                            ) : (
-                                <>
-                                    Sign In <ArrowRight size={18} />
-                                </>
-                            )}
-                        </button>
-                    </form>
-                </div>
-
-                <div className="bg-gray-50 p-4 text-center border-t border-gray-100">
-                    <p className="text-xs text-gray-400">Restricted Access • Authorized Personnel Only</p>
+                    <p className="text-center text-xs text-slate-500 mt-6">
+                        © 2025 UDYAM Registration Portal. All rights reserved.
+                    </p>
                 </div>
             </div>
         </div>
