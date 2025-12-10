@@ -70,7 +70,7 @@ export default function AdminLogin({ onLogin }) {
                     <div className="mt-12 flex items-center gap-6">
                         <div className="text-center">
                             <p className="text-3xl font-black text-white">500+</p>
-                            <p className="text-xs text-slate-500 uppercase tracking-wider">Applications</p>
+                            <p className="text-xs text-slate-500 uppercase tracking-wider">Registrations</p>
                         </div>
                         <div className="w-px h-12 bg-slate-700"></div>
                         <div className="text-center">

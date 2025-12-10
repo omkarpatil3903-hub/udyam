@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { collection, onSnapshot, query, orderBy, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import { CreditCard, Clock, User, Building2, FileText, CheckCircle, Eye, AlertCircle, DollarSign } from 'lucide-react';
+import { CreditCard, Clock, User, Building2, FileText, CheckCircle, Eye, AlertCircle, IndianRupee } from 'lucide-react';
 import RegistrationViewModal from '../components/RegistrationViewModal';
 import AdminLayout from '../components/AdminLayout';
 
-export default function Applications({ onLogout }) {
+export default function Registrations({ onLogout }) {
     const [mainTab, setMainTab] = useState('paid'); // 'paid' or 'unpaid'
     const [workFilter, setWorkFilter] = useState('all'); // 'all', 'pending', 'completed' (for paid tab)
     const [registrations, setRegistrations] = useState([]);
@@ -62,17 +62,13 @@ export default function Applications({ onLogout }) {
             item.mobile?.includes(searchTerm) ||
             item.id?.toLowerCase().includes(searchTerm.toLowerCase());
 
-        // Handle old data that might have 'Pending' or 'Successful' as paymentStatus
         const isPaid = item.paymentStatus === 'Paid' || item.paymentStatus === 'Successful';
         const isUnpaid = item.paymentStatus === 'Unpaid' || item.paymentStatus === 'Pending';
-
-        // Treat missing workStatus as 'Pending'
         const workStatus = item.workStatus || 'Pending';
 
         if (mainTab === 'unpaid') {
             return isUnpaid && matchesSearch;
         } else {
-            // Paid tab
             if (workFilter === 'all') return isPaid && matchesSearch;
             if (workFilter === 'pending') return isPaid && workStatus === 'Pending' && matchesSearch;
             if (workFilter === 'completed') return isPaid && workStatus === 'Completed' && matchesSearch;
@@ -80,7 +76,6 @@ export default function Applications({ onLogout }) {
         return matchesSearch;
     });
 
-    // Counts - treat missing workStatus as 'Pending'
     const unpaidCount = registrations.filter(i => i.paymentStatus === 'Unpaid' || i.paymentStatus === 'Pending').length;
     const paidCount = registrations.filter(i => i.paymentStatus === 'Paid' || i.paymentStatus === 'Successful').length;
     const paidPendingCount = registrations.filter(i => (i.paymentStatus === 'Paid' || i.paymentStatus === 'Successful') && (i.workStatus === 'Pending' || !i.workStatus)).length;
@@ -112,7 +107,7 @@ export default function Applications({ onLogout }) {
                             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Paid</p>
                             <p className="text-3xl font-black text-gray-900">{paidCount}</p>
                             <p className="text-xs text-emerald-600 font-medium mt-2 flex items-center gap-1">
-                                <DollarSign size={12} /> Payment received
+                                <IndianRupee size={12} /> Payment received
                             </p>
                         </div>
                         <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-500/30 group-hover:scale-110 transition-transform">
@@ -145,23 +140,7 @@ export default function Applications({ onLogout }) {
                 {/* Table Header */}
                 <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
                     <div className="flex items-center gap-3">
-                        <h3 className="font-bold text-gray-900">Applications</h3>
-
-                        {/* Main Tabs */}
-                        <div className="flex bg-white rounded-lg p-0.5 border border-gray-200">
-                            <button
-                                onClick={() => { setMainTab('paid'); setWorkFilter('all'); }}
-                                className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${mainTab === 'paid' ? 'bg-emerald-500 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
-                            >
-                                Paid ({paidCount})
-                            </button>
-                            <button
-                                onClick={() => { setMainTab('unpaid'); setWorkFilter('all'); }}
-                                className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${mainTab === 'unpaid' ? 'bg-orange-500 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
-                            >
-                                Unpaid ({unpaidCount})
-                            </button>
-                        </div>
+                        <h3 className="font-bold text-gray-900">Registrations</h3>
 
                         {/* Sub-tabs for Paid section */}
                         {mainTab === 'paid' && (
@@ -191,9 +170,11 @@ export default function Applications({ onLogout }) {
                         Showing <span className="font-bold text-gray-700">{filteredData.length}</span> results
                     </p>
                 </div>
+            </div>
 
-                {/* Table Content */}
-                <div className="divide-y divide-gray-100">
+            {/* Table Content */}
+            <div className="overflow-x-auto">
+                <div className="min-w-[800px]">
                     {/* Column Headers */}
                     <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-gray-50/50 text-xs font-bold text-gray-500 uppercase tracking-wider">
                         <div className="col-span-3">Application ID</div>
@@ -210,17 +191,17 @@ export default function Applications({ onLogout }) {
                             className={`grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-blue-50/50 transition-colors group ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/30'}`}
                         >
                             <div className="col-span-3">
-                                <p className="font-bold text-gray-900 text-sm">{item.id}</p>
+                                <p className="font-bold text-gray-900 text-sm truncate" title={item.id}>{item.id.slice(0, 12)}...</p>
                                 <p className="text-xs text-gray-400 mt-0.5">{item.date}</p>
                             </div>
                             <div className="col-span-3">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-gray-600">
-                                        <User size={16} />
+                                <div className="flex items-center gap-2">
+                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-gray-600">
+                                        <User size={14} />
                                     </div>
                                     <div>
-                                        <p className="font-semibold text-gray-800 text-sm">{item.applicantName}</p>
-                                        <p className="text-xs text-gray-400 flex items-center gap-1">
+                                        <p className="font-semibold text-gray-800 text-sm truncate">{item.applicantName}</p>
+                                        <p className="text-xs text-gray-400 truncate flex items-center gap-1">
                                             <Building2 size={10} /> {item.businessName || 'N/A'}
                                         </p>
                                     </div>
@@ -231,7 +212,6 @@ export default function Applications({ onLogout }) {
                                 <p className="text-xs text-gray-400 truncate">{item.email}</p>
                             </div>
                             <div className="col-span-2">
-                                {/* Show different status based on which tab we're in */}
                                 {mainTab === 'unpaid' ? (
                                     <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-orange-100 text-orange-700">
                                         <Clock size={10} /> Unpaid
@@ -281,7 +261,7 @@ export default function Applications({ onLogout }) {
                                         Mark Paid
                                     </button>
                                 )}
-                                {mainTab === 'paid' && item.workStatus !== 'Completed' && (
+                                {mainTab === 'paid' && (item.workStatus || 'Pending') !== 'Completed' && (
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation();
@@ -296,18 +276,18 @@ export default function Applications({ onLogout }) {
                             </div>
                         </div>
                     ))}
-                </div>
 
-                {/* Empty State */}
-                {filteredData.length === 0 && (
-                    <div className="flex flex-col items-center justify-center py-16">
-                        <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mb-4">
-                            <FileText size={32} className="text-gray-300" />
+                    {/* Empty State */}
+                    {filteredData.length === 0 && (
+                        <div className="flex flex-col items-center justify-center py-16">
+                            <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mb-4">
+                                <FileText size={32} className="text-gray-300" />
+                            </div>
+                            <h3 className="text-lg font-bold text-gray-400">No applications found</h3>
+                            <p className="text-sm text-gray-400 mt-1">Try adjusting your search or filter</p>
                         </div>
-                        <h3 className="text-lg font-bold text-gray-400">No applications found</h3>
-                        <p className="text-sm text-gray-400 mt-1">Try adjusting your search or filter</p>
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
         </AdminLayout>
     );

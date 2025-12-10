@@ -23,64 +23,22 @@ export default function Footer() {
 
     return (
         <footer className="bg-orange-600 text-white font-sans text-xs md:text-sm mt-auto relative">
-            <div className="container mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="container mx-auto px-4 py-8 flex justify-center">
 
                 {/* Useful Links */}
-                <div>
+                <div className="text-center">
                     <h3 className="font-bold text-lg mb-4 text-white">Useful Links</h3>
                     <ul className="space-y-2">
                         <li><a href="#" className="hover:text-black transition">Privacy Policy</a></li>
-                        <li><a href="#" className="hover:text-black transition">Terms Of Services</a></li>
+                        <li><a href="/terms-of-service" className="hover:text-black transition">Terms Of Services</a></li>
                         <li><a href="#" className="hover:text-black transition">Cancellation & Refund Policy</a></li>
                         <li><a href="#" className="hover:text-black transition">SOP</a></li>
                         <li><a href="#" className="hover:text-black transition">About Us</a></li>
                         <li><a href="#" className="hover:text-black transition">Contact Us</a></li>
                         <li><a href="#" className="hover:text-black transition">Shipping Policy</a></li>
                     </ul>
-                </div>
-
-                {/* Internal Links Col 1 */}
-                <div>
-                    <h3 className="font-bold text-lg mb-4 text-white">Internal Links</h3>
-                    <ul className="space-y-2">
-                        <li><a href="#" className="hover:text-black transition">Udyam Registration For Proprietor</a></li>
-                        <li><a href="#" className="hover:text-black transition">Udyam Registration For Partnership</a></li>
-                        <li><a href="#" className="hover:text-black transition">Udyam Registration For Public Limited</a></li>
-                        <li><a href="#" className="hover:text-black transition">Udyam Registration For Others</a></li>
-                        <li><a href="#" className="hover:text-black transition">Update Udyam Registration</a></li>
-                        <li><a href="#" className="hover:text-black transition">Print Udyam Registration</a></li>
-                        <li><a href="#" className="hover:text-black transition">Udyog Print Certificate</a></li>
-                    </ul>
-                </div>
-
-                {/* Internal Links Col 2 */}
-                <div>
-                    <div className="h-8 md:block hidden"></div> {/* Spacer */}
-                    <ul className="space-y-2 mt-0 md:mt-11">
-                        <li><a href="#" className="hover:text-black transition">Udyam Re Registration For Proprietor</a></li>
-                        <li><a href="#" className="hover:text-black transition">Udyam Re Registration For Partnership</a></li>
-                        <li><a href="#" className="hover:text-black transition">Udyam Re Registration For Public Limited</a></li>
-                        <li><a href="#" className="hover:text-black transition">Udyam Re Registration For Others</a></li>
-                        <li><a href="#" className="hover:text-black transition">Udyam Re-registration</a></li>
-                        <li><a href="#" className="hover:text-black transition">Raise A Concern</a></li>
-                        <li><a href="#" className="hover:text-black transition">Track Complaint</a></li>
-                    </ul>
-                </div>
-
-                {/* Quick Links */}
-                <div>
-                    <h3 className="font-bold text-lg mb-4 text-white">Quick Links</h3>
-                    <ul className="space-y-2">
-                        <li><a href="#" className="hover:text-black transition">Home</a></li>
-                        <li><a href="#" className="hover:text-black transition">Track Order</a></li>
-                        <li><a href="#" className="hover:text-black transition">Blog</a></li>
-                        <li><a href="#" className="hover:text-black transition">Enquiry</a></li>
-                        <li><a href="#" className="hover:text-black transition">Pricing</a></li>
-                        <li><a href="#" className="hover:text-black transition">File A Grievance</a></li>
-                        <li><a href="#" className="hover:text-black transition">Track A Grievance</a></li>
-                    </ul>
                     {/* Facebook Icon */}
-                    <div className="mt-4">
+                    <div className="mt-4 flex justify-center">
                         <div className="bg-black rounded-full w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-gray-800 transition-colors">
                             <span className="text-white font-bold text-xl">f</span>
                         </div>

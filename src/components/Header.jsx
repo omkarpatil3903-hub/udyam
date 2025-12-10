@@ -1,21 +1,24 @@
 import React, { useState } from 'react';
-import UdyamLogo from '../assets/UDYAMlogo.webp';
+import { Link, useLocation } from 'react-router-dom';
 import SwachhLogo from '../assets/swachh1111.webp';
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const location = useLocation();
+
+    const navLinks = [
+        { path: '/', label: 'Udyam Registration' },
+        { path: '/', label: 'Udyam Re-Registration' },
+        { path: '/', label: 'Update Certificate' },
+        { path: '/', label: 'Print Certificate' },
+        { path: '/samplecertificate', label: 'Sample Certificate' },
+        { path: '/contact', label: 'Contact' },
+    ];
 
     return (
         <header className="font-sans bg-white shadow-sm">
             {/* Top Banner Area */}
             <div className="container mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 text-center md:text-left">
-
-                {/* Left: Udyam Logo (Real) */}
-                <div className="flex-shrink-0">
-                    <div className="flex flex-col items-center">
-                        <img src={UdyamLogo} alt="Udyam Registration Logo" className="w-24 md:w-28" />
-                    </div>
-                </div>
 
                 {/* Center: Info Stack */}
                 <div className="flex-grow flex flex-col items-center justify-center px-4">
@@ -25,15 +28,15 @@ export default function Header() {
                     <h2 className="text-blue-900 font-bold text-lg md:text-xl mt-1">
                         सूक्ष्म, लघु और मध्यम उद्यमों के लिए उद्यम पंजीकरण
                     </h2>
-                    <p className="text-black font-bold text-xs md:text-sm mt-1">
+                    {/* <p className="text-black font-bold text-xs md:text-sm mt-1">
                         (AN ISO CERTIFIED PRIVATE CONSULTANCY ORGANISATION)
                     </p>
                     <div className="text-gray-700 text-lg md:text-xl mt-2 font-normal">
                         Udyam Registration Portal / उद्यम पंजीकरण पोर्टल
-                    </div>
+                    </div> */}
                     <div className="flex items-center space-x-2 mt-2">
                         <span className="text-pink-500 font-bold transform -rotate-12">📞</span>
-                        <span className="text-blue-900 font-extrabold text-xl">HELP-LINE: +91 - 9355564608</span>
+                        <span className="text-blue-900 font-extrabold text-xl">HELP-LINE: +91 - 9623551923</span>
                     </div>
                 </div>
 
@@ -63,12 +66,36 @@ export default function Header() {
 
                     {/* Nav Links */}
                     <nav className={`${isMenuOpen ? 'block' : 'hidden'} md:flex flex-col md:flex-row md:justify-center md:space-x-8 text-sm font-medium py-3 px-4 transition-all duration-300`}>
-                        <a href="#" className="block py-2 md:py-0 hover:text-orange-400 transition border-b md:border-none border-blue-800">Udyam Registration</a>
-                        <a href="#" className="block py-2 md:py-0 hover:text-orange-400 transition border-b md:border-none border-blue-800">Udyam Re-Registration</a>
-                        <a href="#" className="block py-2 md:py-0 hover:text-orange-400 transition border-b md:border-none border-blue-800">Update Certificate</a>
-                        <a href="#" className="block py-2 md:py-0 hover:text-orange-400 transition border-b md:border-none border-blue-800">Print Certificate</a>
-                        <a href="#" className="block py-2 md:py-0 hover:text-orange-400 transition border-b md:border-none border-blue-800">Sample Certificate</a>
-                        <a href="#" className="block py-2 md:py-0 hover:text-orange-400 transition">Contact Us</a>
+                        {navLinks.map((link, index) => {
+                            // Only show first tab as active for "/" path, others have unique paths
+                            const isActive = link.path === '/'
+                                ? (location.pathname === '/' && index === 0)
+                                : location.pathname === link.path;
+                            const isLast = index === navLinks.length - 1;
+
+                            if (link.path === '#') {
+                                return (
+                                    <a
+                                        key={index}
+                                        href="#"
+                                        className={`block py-2 md:py-0 hover:text-orange-400 transition ${!isLast ? 'border-b md:border-none border-blue-800' : ''}`}
+                                    >
+                                        {link.label}
+                                    </a>
+                                );
+                            }
+
+                            return (
+                                <Link
+                                    key={index}
+                                    to={link.path}
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className={`block py-2 md:py-0 transition ${!isLast ? 'border-b md:border-none border-blue-800' : ''} ${isActive ? 'text-orange-400' : 'hover:text-orange-400'}`}
+                                >
+                                    {link.label}
+                                </Link>
+                            );
+                        })}
                     </nav>
                 </div>
             </div>
