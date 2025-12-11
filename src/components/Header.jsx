@@ -14,9 +14,9 @@ export default function Header() {
 
     const navLinks = [
         { path: '/', label: 'Udyam Registration' },
-        { path: '/', label: 'Udyam Re-Registration' },
-        { path: '/', label: 'Update Certificate' },
-        { path: '/', label: 'Print Certificate' },
+        { path: '/udyam-re-registration', label: 'Udyam Re-Registration' },
+        { path: '/update-certificate', label: 'Update Certificate' },
+        { path: '/print-certificate', label: 'Print Certificate' },
         { path: '/samplecertificate', label: 'Sample Certificate' },
         { path: '/contact', label: 'Contact' },
     ];

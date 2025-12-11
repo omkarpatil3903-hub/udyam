@@ -174,6 +174,9 @@ function AppContent({ isAdminLoggedIn, handleLogout, loading, authChecked }) {
     <Routes>
       {/* Main Website Routes */}
       <Route path="/" element={<RegistrationLayout />} />
+      <Route path="/udyam-re-registration" element={<RegistrationLayout />} />
+      <Route path="/update-certificate" element={<RegistrationLayout />} />
+      <Route path="/print-certificate" element={<RegistrationLayout />} />
       <Route path="/samplecertificate" element={<SampleCertificateLayout />} />
 
       <Route path="/contact" element={<ContactLayout />} />
