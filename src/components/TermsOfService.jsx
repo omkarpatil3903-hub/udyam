@@ -49,7 +49,7 @@ export default function TermsOfService() {
                     <p className="text-gray-700 mb-2">Welcome to udyamregistrations.co.in</p>
                     <p className="text-gray-700 mb-4">
                         These terms and conditions outline the rules and regulations for the use of Udyamregister Website, located at{' '}
-                        <Link to="/terms-of-service" className="text-blue-600 hover:underline">https://udyamregistrations.co.in/terms-of-service</Link>
+                        <Link to="/terms-of-service" className="text-blue-600 hover:underline">https://eudyogonline.com/terms-of-service</Link>
                     </p>
 
                     <ol className="list-decimal list-outside ml-6 space-y-4 text-gray-800">
@@ -81,7 +81,7 @@ export default function TermsOfService() {
                             <strong>Privacy Policy</strong>
                             <p className="mt-1 text-gray-700">
                                 Your use of the website is also governed by our Privacy Policy, which can be accessed at{' '}
-                                <Link to="/privacy-policy" className="text-blue-600 hover:underline">https://udyamregistrations.co.in/privacy-policy</Link>
+                                <Link to="/privacy-policy" className="text-blue-600 hover:underline">http://eudyogonline.com/privacy-policy</Link>
                             </p>
                         </li>
                         <li>
@@ -100,7 +100,7 @@ export default function TermsOfService() {
                             <strong>Contact Information</strong>
                             <p className="mt-1 text-gray-700">
                                 For questions or concerns about these terms and conditions, please contact us at{' '}
-                                <Link to="/contact" className="text-blue-600 hover:underline">https://udyamregistrations.co.in/contact-us</Link>
+                                <Link to="/contact" className="text-blue-600 hover:underline">http://eudyogonline.com/contact</Link>
                             </p>
                         </li>
                         <li>
