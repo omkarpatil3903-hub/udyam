@@ -1,32 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { auth } from './firebase';
-import Header from './components/Header';
-import Banner from './components/Banner';
-import RegistrationSection from './components/RegistrationSection';
-import ReRegistrationSection from './components/ReRegistrationSection';
-import ReRegistrationDetails from './components/ReRegistrationDetails';
-import UpdateCertificateSection from './components/UpdateCertificateSection';
-import UpdateCertificateDetails from './components/UpdateCertificateDetails';
-import PrintCertificateSection from './components/PrintCertificateSection';
-import PrintCertificateDetails from './components/PrintCertificateDetails';
-import CancelRegistrationSection from './components/CancelRegistrationSection';
-import CancelRegistrationDetails from './components/CancelRegistrationDetails';
-import SampleCertificate from './components/SampleCertificate';
-import FAQsPage from './components/FAQsPage';
-import ContactPage from './components/ContactPage';
-import TermsOfService from './components/TermsOfService';
-import UdyamDetails from './components/UdyamDetails';
-import StandardOperatingProcedure from './components/StandardOperatingProcedure';
-import Footer from './components/Footer';
-import Registrations from './pages/Registrations';
-import ReRegistrations from './pages/ReRegistrations';
-import UpdateCertificates from './pages/UpdateCertificates';
-import PrintCertificates from './pages/PrintCertificates';
-import CancelRegistrations from './pages/CancelRegistrations';
-import Queries from './pages/Queries';
-import AdminLogin from './pages/AdminLogin';
+import React, { useState, useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useNavigate,
+} from "react-router-dom";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from "./firebase";
+import Header from "./components/Header";
+import Banner from "./components/Banner";
+import RegistrationSection from "./components/RegistrationSection";
+import SampleCertificate from "./components/SampleCertificate";
+import FAQsPage from "./components/FAQsPage";
+import ContactPage from "./components/ContactPage";
+import TermsOfService from "./components/TermsOfService";
+import UdyamDetails from "./components/UdyamDetails";
+import StandardOperatingProcedure from "./components/StandardOperatingProcedure";
+import PrivacyPolicy from "./components/PrivacyPolicy";
+import CancellationRefundPolicy from "./components/CancellationRefundPolicy";
+import AboutUs from "./components/AboutUs";
+import SOP from "./components/SOP";
+import ShippingPolicy from "./components/ShippingPolicy";
+import Footer from "./components/Footer";
+import Registrations from "./pages/Registrations";
+import AdminLogin from "./pages/AdminLogin";
 
 // Registration page layout
 const RegistrationLayout = () => {
@@ -38,62 +35,6 @@ const RegistrationLayout = () => {
         <RegistrationSection />
         <UdyamDetails />
         <StandardOperatingProcedure />
-      </main>
-      <Footer />
-    </div>
-  );
-};
-
-// Re-registration page layout
-const ReRegistrationLayout = () => {
-  return (
-    <div className="min-h-screen flex flex-col font-sans text-gray-900 bg-white">
-      <Header />
-      <main className="flex-grow">
-        <ReRegistrationSection />
-        <ReRegistrationDetails />
-      </main>
-      <Footer />
-    </div>
-  );
-};
-
-// Update Certificate page layout
-const UpdateCertificateLayout = () => {
-  return (
-    <div className="min-h-screen flex flex-col font-sans text-gray-900 bg-white">
-      <Header />
-      <main className="flex-grow">
-        <UpdateCertificateSection />
-        <UpdateCertificateDetails />
-      </main>
-      <Footer />
-    </div>
-  );
-};
-
-// Print Certificate page layout
-const PrintCertificateLayout = () => {
-  return (
-    <div className="min-h-screen flex flex-col font-sans text-gray-900 bg-white">
-      <Header />
-      <main className="flex-grow">
-        <PrintCertificateSection />
-        <PrintCertificateDetails />
-      </main>
-      <Footer />
-    </div>
-  );
-};
-
-// Cancel Registration page layout
-const CancelRegistrationLayout = () => {
-  return (
-    <div className="min-h-screen flex flex-col font-sans text-gray-900 bg-white">
-      <Header />
-      <main className="flex-grow">
-        <CancelRegistrationSection />
-        <CancelRegistrationDetails />
       </main>
       <Footer />
     </div>
@@ -152,106 +93,178 @@ const ContactLayout = () => {
   );
 };
 
+// Privacy Policy page layout
+const PrivacyPolicyLayout = () => {
+  return (
+    <div className="min-h-screen flex flex-col font-sans text-gray-900 bg-white">
+      <Header />
+      <main className="flex-grow">
+        <PrivacyPolicy />
+      </main>
+      <Footer />
+    </div>
+  );
+};
+
+// Cancellation & Refund Policy page layout
+const CancellationRefundPolicyLayout = () => {
+  return (
+    <div className="min-h-screen flex flex-col font-sans text-gray-900 bg-white">
+      <Header />
+      <main className="flex-grow">
+        <CancellationRefundPolicy />
+      </main>
+      <Footer />
+    </div>
+  );
+};
+
+// About Us page layout
+const AboutUsLayout = () => {
+  return (
+    <div className="min-h-screen flex flex-col font-sans text-gray-900 bg-white">
+      <Header />
+      <main className="flex-grow">
+        <AboutUs />
+      </main>
+      <Footer />
+    </div>
+  );
+};
+
+// SOP page layout
+const SOPLayout = () => {
+  return (
+    <div className="min-h-screen flex flex-col font-sans text-gray-900 bg-white">
+      <Header />
+      <main className="flex-grow">
+        <SOP />
+      </main>
+      <Footer />
+    </div>
+  );
+};
+
+// Shipping Policy page layout
+const ShippingPolicyLayout = () => {
+  return (
+    <div className="min-h-screen flex flex-col font-sans text-gray-900 bg-white">
+      <Header />
+      <main className="flex-grow">
+        <ShippingPolicy />
+      </main>
+      <Footer />
+    </div>
+  );
+};
+
+function AppContent({ isAdminLoggedIn, handleLogout, loading, authChecked }) {
+  const navigate = useNavigate();
+
+  const handleLogoutWithRedirect = async () => {
+    await handleLogout();
+    navigate("/", { replace: true });
+  };
+
+  if (loading || !authChecked) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800">
+        <div className="text-center">
+          <div className="inline-block">
+            <div className="w-16 h-16 border-4 border-slate-700 border-t-blue-500 rounded-full animate-spin"></div>
+          </div>
+          <p className="mt-4 text-slate-400 font-medium">
+            Checking authentication...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <Routes>
+      {/* Main Website Routes */}
+      <Route path="/" element={<RegistrationLayout />} />
+      <Route path="/samplecertificate" element={<SampleCertificateLayout />} />
+      <Route path="/faqs" element={<FAQsLayout />} />
+      <Route path="/contact" element={<ContactLayout />} />
+      <Route path="/terms-of-service" element={<TermsOfServiceLayout />} />
+      <Route path="/privacy-policy" element={<PrivacyPolicyLayout />} />
+      <Route path="/cancellation-refund-policy" element={<CancellationRefundPolicyLayout />} />
+      <Route path="/about-us" element={<AboutUsLayout />} />
+      <Route path="/sop" element={<SOPLayout />} />
+      <Route path="/shipping-policy" element={<ShippingPolicyLayout />} />
+
+
+      {/* Admin Routes */}
+      <Route
+        path="/admin"
+        element={
+          isAdminLoggedIn ? (
+            <Registrations onLogout={handleLogoutWithRedirect} />
+          ) : (
+            <AdminLogin />
+          )
+        }
+      />
+      <Route
+        path="/admin"
+        element={
+          isAdminLoggedIn ? (
+            <Registrations onLogout={handleLogoutWithRedirect} />
+          ) : (
+            <AdminLogin />
+          )
+        }
+      />
+    </Routes>
+  );
+}
+
 function App() {
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
+    // Initialize auth state listener
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setIsAdminLoggedIn(!!user);
+      if (user) {
+        // User is logged in - verify they are an admin
+        setIsAdminLoggedIn(true);
+      } else {
+        // User is not logged in
+        setIsAdminLoggedIn(false);
+      }
+      setAuthChecked(true);
       setLoading(false);
     });
-    return () => unsubscribe();
+
+    // Cleanup subscription on component unmount
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   const handleLogout = async () => {
     try {
+      setLoading(true);
       await signOut(auth);
+      setIsAdminLoggedIn(false);
     } catch (error) {
       console.error("Error signing out: ", error);
+      setLoading(false);
     }
   };
 
-  if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
-  }
-
   return (
     <Router>
-      <Routes>
-        {/* Main Website Routes */}
-        <Route path="/" element={<RegistrationLayout />} />
-        <Route path="/reregister" element={<ReRegistrationLayout />} />
-        <Route path="/updatecertificate" element={<UpdateCertificateLayout />} />
-        <Route path="/printcertificate" element={<PrintCertificateLayout />} />
-        <Route path="/cancelregistration" element={<CancelRegistrationLayout />} />
-        <Route path="/samplecertificate" element={<SampleCertificateLayout />} />
-        <Route path="/faqs" element={<FAQsLayout />} />
-        <Route path="/contact" element={<ContactLayout />} />
-        <Route path="/terms-of-service" element={<TermsOfServiceLayout />} />
-
-        {/* Admin Routes */}
-        <Route
-          path="/admin"
-          element={
-            isAdminLoggedIn ? (
-              <Registrations onLogout={handleLogout} />
-            ) : (
-              <AdminLogin />
-            )
-          }
-        />
-        <Route
-          path="/admin/queries"
-          element={
-            isAdminLoggedIn ? (
-              <Queries onLogout={handleLogout} />
-            ) : (
-              <AdminLogin />
-            )
-          }
-        />
-        <Route
-          path="/admin/reregistrations"
-          element={
-            isAdminLoggedIn ? (
-              <ReRegistrations onLogout={handleLogout} />
-            ) : (
-              <AdminLogin />
-            )
-          }
-        />
-        <Route
-          path="/admin/updatecertificates"
-          element={
-            isAdminLoggedIn ? (
-              <UpdateCertificates onLogout={handleLogout} />
-            ) : (
-              <AdminLogin />
-            )
-          }
-        />
-        <Route
-          path="/admin/printcertificates"
-          element={
-            isAdminLoggedIn ? (
-              <PrintCertificates onLogout={handleLogout} />
-            ) : (
-              <AdminLogin />
-            )
-          }
-        />
-        <Route
-          path="/admin/cancelregistrations"
-          element={
-            isAdminLoggedIn ? (
-              <CancelRegistrations onLogout={handleLogout} />
-            ) : (
-              <AdminLogin />
-            )
-          }
-        />
-      </Routes>
+      <AppContent
+        isAdminLoggedIn={isAdminLoggedIn}
+        handleLogout={handleLogout}
+        loading={loading}
+        authChecked={authChecked}
+      />
     </Router>
   );
 }

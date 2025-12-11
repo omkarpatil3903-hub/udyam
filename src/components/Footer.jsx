@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Footer() {
     const [isVisible, setIsVisible] = React.useState(false);
@@ -22,31 +23,26 @@ export default function Footer() {
     };
 
     return (
-        <footer className="bg-orange-600 text-white font-sans text-xs md:text-sm mt-auto relative">
+        <footer className="bg-orange-600 text-white font-sans text-xs md:text-sm mt-auto relative z-50">
             <div className="container mx-auto px-4 py-8 flex justify-center">
 
                 {/* Useful Links */}
                 <div className="text-center">
                     <h3 className="font-bold text-lg mb-4 text-white">Useful Links</h3>
                     <ul className="space-y-2">
-                        <li><a href="#" className="hover:text-black transition">Privacy Policy</a></li>
-                        <li><a href="/terms-of-service" className="hover:text-black transition">Terms Of Services</a></li>
-                        <li><a href="#" className="hover:text-black transition">Cancellation & Refund Policy</a></li>
-                        <li><a href="#" className="hover:text-black transition">SOP</a></li>
-                        <li><a href="#" className="hover:text-black transition">About Us</a></li>
-                        <li><a href="#" className="hover:text-black transition">Contact Us</a></li>
-                        <li><a href="#" className="hover:text-black transition">Shipping Policy</a></li>
+                        <li><Link to="/privacy-policy" className="hover:text-black transition">Privacy Policy</Link></li>
+                        <li><Link to="/terms-of-service" className="hover:text-black transition">Terms Of Services</Link></li>
+                        <li><Link to="/cancellation-refund-policy" className="hover:text-black transition">Cancellation & Refund Policy</Link></li>
+                        <li><Link to="/sop" className="hover:text-black transition">SOP</Link></li>
+                        <li><Link to="/about-us" className="hover:text-black transition">About Us</Link></li>
+                        <li><Link to="/contact" className="hover:text-black transition">Contact Us</Link></li>
+                        <li><Link to="/shipping-policy" className="hover:text-black transition">Shipping Policy</Link></li>
                     </ul>
-                    {/* Facebook Icon */}
-                    <div className="mt-4 flex justify-center">
-                        <div className="bg-black rounded-full w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-gray-800 transition-colors">
-                            <span className="text-white font-bold text-xl">f</span>
-                        </div>
-                    </div>
+
                 </div>
             </div>
 
-            {/* Bottom Bar */}
+            {/* Bottom Bar
             <div className="bg-orange-600 border-t border-orange-500">
                 <div className="container mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center text-xs opacity-90">
                     <div className="mb-2 md:mb-0">
@@ -56,7 +52,7 @@ export default function Footer() {
                         TOTAL VISITOR : 84,399
                     </div>
                 </div>
-            </div>
+            </div> */}
 
             {/* Back to Top Button */}
             <div className={`fixed bottom-8 right-8 transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
