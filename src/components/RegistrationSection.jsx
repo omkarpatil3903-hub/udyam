@@ -174,7 +174,7 @@ export default function RegistrationSection() {
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-[#fffbef] p-3 border border-orange-200 rounded-sm">
                                 <div>
                                     <label className="block text-gray-800 font-bold mb-1">Pincode / पिन कोड <span className="text-red-600">*</span></label>
-                                    <input name="pincode" value={formData.pincode} onChange={handleChange} required type="text" className="w-full border border-gray-300 px-2 py-1.5 bg-[#fffaf4] focus:outline-none focus:border-blue-500 rounded-sm" />
+                                    <input name="pincode" value={formData.pincode} onChange={handleChange} required type="number" className="w-full border border-gray-300 px-2 py-1.5 bg-[#fffaf4] focus:outline-none focus:border-blue-500 rounded-sm" />
                                 </div>
                                 <div>
                                     <label className="block text-gray-800 font-bold mb-1">State / राज्य <span className="text-red-600">*</span></label>

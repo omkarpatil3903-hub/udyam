@@ -85,7 +85,7 @@ export default function Header() {
             </div>
 
             {/* Navigation Bar - Compact & Improved */}
-            <div className="bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 text-white shadow-lg border-t border-blue-700 relative z-50">
+            <div className="bg-gradient-to-r bg-green-600 text-white shadow-lg border-t border-blue-700 relative z-50">
                 <div className="container mx-auto">
                     {/* Mobile Menu Toggle */}
                     <div className="md:hidden flex justify-between items-center p-3">

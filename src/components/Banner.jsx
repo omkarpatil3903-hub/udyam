@@ -36,14 +36,14 @@ export default function Banner() {
 
             {/* Red/Orange Overlay Shape - Refined Gradient & Shape */}
             <div
-                className="absolute top-0 left-0 h-full w-auto max-w-[90%] md:max-w-fit pr-24 bg-gradient-to-r from-red-600/90 to-orange-500/80 flex items-center z-10 backdrop-blur-[2px]"
+                className="absolute top-0 left-0 h-full w-auto max-w-[60%] md:max-w-fit pr-16 md:pr-24 bg-gradient-to-r from-red-600/90 to-orange-500/80 flex items-center z-10 backdrop-blur-[2px]"
                 style={{ clipPath: 'polygon(0 0, 100% 0, 85% 100%, 0% 100%)' }}
             >
                 <div className="container mx-auto px-4 md:px-8 pl-4 md:pl-16 w-full">
                     {/* Text Content directly on Banner */}
                     <div className="max-w-3xl text-white space-y-3 animate-fade-in-up">
 
-                        <h2 className="text-3xl md:text-5xl lg:text-7xl font-extrabold uppercase leading-none tracking-tight drop-shadow-lg transform transition-all duration-500 hover:translate-x-2">
+                        <h2 className="text-2xl md:text-5xl lg:text-7xl font-extrabold uppercase leading-none tracking-tight drop-shadow-lg transform transition-all duration-500 hover:translate-x-2">
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-200 to-yellow-200">Udyam</span> Registration <br /> Portal
                         </h2>
 
