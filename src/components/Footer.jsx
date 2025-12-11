@@ -30,13 +30,13 @@ export default function Footer() {
                 <div className="text-center">
                     <h3 className="font-bold text-lg mb-4 text-white">Useful Links</h3>
                     <ul className="space-y-2">
-                        <li><Link to="/privacy-policy" className="hover:text-black transition">Privacy Policy</Link></li>
-                        <li><Link to="/terms-of-service" className="hover:text-black transition">Terms Of Services</Link></li>
-                        <li><Link to="/cancellation-refund-policy" className="hover:text-black transition">Cancellation & Refund Policy</Link></li>
-                        <li><Link to="/sop" className="hover:text-black transition">SOP</Link></li>
-                        <li><Link to="/about-us" className="hover:text-black transition">About Us</Link></li>
-                        <li><Link to="/contact" className="hover:text-black transition">Contact Us</Link></li>
-                        <li><Link to="/shipping-policy" className="hover:text-black transition">Shipping Policy</Link></li>
+                        <li><Link to="/privacy-policy" onClick={() => window.scrollTo(0, 0)} className="hover:text-black transition">Privacy Policy</Link></li>
+                        <li><Link to="/terms-of-service" onClick={() => window.scrollTo(0, 0)} className="hover:text-black transition">Terms Of Services</Link></li>
+                        <li><Link to="/cancellation-refund-policy" onClick={() => window.scrollTo(0, 0)} className="hover:text-black transition">Cancellation & Refund Policy</Link></li>
+                        <li><Link to="/sop" onClick={() => window.scrollTo(0, 0)} className="hover:text-black transition">SOP</Link></li>
+                        <li><Link to="/about-us" onClick={() => window.scrollTo(0, 0)} className="hover:text-black transition">About Us</Link></li>
+                        <li><Link to="/contact" onClick={() => window.scrollTo(0, 0)} className="hover:text-black transition">Contact Us</Link></li>
+                        <li><Link to="/shipping-policy" onClick={() => window.scrollTo(0, 0)} className="hover:text-black transition">Shipping Policy</Link></li>
                     </ul>
 
                 </div>
