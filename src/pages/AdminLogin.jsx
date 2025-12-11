@@ -120,7 +120,7 @@ export default function AdminLogin() {
       {/* Right Side - Login Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
         <div className="w-full max-w-md">
-          {/* Mobile Logo */}
+
           <div className="lg:hidden flex items-center justify-center gap-3 mb-8">
             <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/30">
               <LayoutDashboard className="text-white" size={24} />
@@ -202,11 +202,10 @@ export default function AdminLogin() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className={`w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 ${
-                    isLoading
+                  className={`w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 ${isLoading
                       ? "opacity-70 cursor-not-allowed"
                       : "hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-0.5"
-                  }`}
+                    }`}
                 >
                   {isLoading ? (
                     <>
