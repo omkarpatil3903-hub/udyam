@@ -19,6 +19,15 @@ export default function ContactPage() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                        {/* Owner Name */}
+                        <div className="bg-white p-6 border border-gray-200 rounded-sm shadow-sm md:col-span-2">
+                            <h4 className="font-bold text-gray-800 mb-2 uppercase text-sm border-b border-gray-200 pb-2 inline-block">
+                                Owner Name
+                            </h4>
+                            <p className="text-xl font-bold text-blue-900">
+                                NILESH ANANDA MANE
+                            </p>
+                        </div>
                         {/* Address */}
                         <div className="bg-white p-6 border border-gray-200 rounded-sm shadow-sm">
                             <h4 className="font-bold text-gray-800 mb-2 uppercase text-sm border-b border-gray-200 pb-2 inline-block">
