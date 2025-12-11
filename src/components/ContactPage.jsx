@@ -5,7 +5,7 @@ export default function ContactPage() {
         <section className="container mx-auto px-2 py-8 font-sans">
             <div className="bg-orange-50 rounded-lg overflow-hidden shadow-sm border border-orange-100">
                 {/* Header matching UdyamDetails */}
-                <div className="bg-blue-600 text-white text-center py-3 font-bold uppercase tracking-wide">
+                <div className="bg-green-600 text-white text-center py-3 font-bold uppercase tracking-wide">
                     CONTACT US
                 </div>
 

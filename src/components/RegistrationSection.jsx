@@ -130,17 +130,17 @@ export default function RegistrationSection() {
             />
 
             <section className="container mx-auto px-2 py-8 font-sans">
-                {/* Section Title */}
+                {/* Section Title
                 <h2 className="text-2xl md:text-3xl font-bold text-center text-blue-800 mb-6 uppercase tracking-wide">
                     Udyam Registration Portal
-                </h2>
+                </h2> */}
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
 
                     {/* Left Column: Registration Form (1 col) */}
                     <div className="bg-white border border-blue-100 shadow-md rounded overflow-hidden">
                         {/* Form Header */}
-                        <div className="bg-blue-700 text-white text-center py-3 font-bold uppercase text-sm tracking-wide min-h-[72px] flex flex-col justify-center">
+                        <div className="bg-orange-600 text-white text-center py-3 font-bold uppercase text-sm tracking-wide min-h-[72px] flex flex-col justify-center">
                             UDYAM REGISTRATION FORM ONLINE <br />
                             <span className="text-xs font-normal opacity-90">उद्यम पंजीकरण फॉर्म ऑनलाइन</span>
                         </div>
@@ -328,7 +328,7 @@ export default function RegistrationSection() {
 
                     {/* Right Column: Instructions (1 col) */}
                     <div className="bg-white border border-blue-100 shadow-md rounded overflow-hidden flex flex-col">
-                        <div className="bg-blue-700 text-white text-center py-3 font-bold text-sm uppercase tracking-wide min-h-[72px] flex flex-col justify-center">
+                        <div className="bg-orange-600 text-white text-center py-3 font-bold text-sm uppercase tracking-wide min-h-[72px] flex flex-col justify-center">
                             READ THE INSTRUCTION TO FILL UDYAM APPLICATION FORM <br />
                             <span className="text-xs opacity-90 font-normal">उद्यम आवेदन पत्र भरने के लिए निर्देश पढ़ें</span>
                         </div>

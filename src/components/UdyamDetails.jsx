@@ -7,7 +7,7 @@ export default function UdyamDetails() {
 
                 {/* Section 1: What is Udyam Registration? */}
                 <div>
-                    <div className="bg-blue-600 text-white text-center py-3 font-bold uppercase tracking-wide">
+                    <div className="bg-orange-600 text-white text-center py-3 font-bold uppercase tracking-wide">
                         WHAT IS UDYAM REGISTRATION?
                     </div>
                     <div className="p-6 text-gray-800 text-sm md:text-base leading-relaxed space-y-4">
@@ -25,7 +25,7 @@ export default function UdyamDetails() {
 
                 {/* Section 2: Process of Udyam Registration */}
                 <div>
-                    <div className="bg-blue-600 text-white text-center py-3 font-bold uppercase tracking-wide">
+                    <div className="bg-orange-600 text-white text-center py-3 font-bold uppercase tracking-wide">
                         PROCESS OF UDYAM REGISTRATION
                     </div>
                     <div className="p-6 text-gray-800 text-sm md:text-base leading-relaxed">
