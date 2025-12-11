@@ -13,7 +13,7 @@ export default function PrivacyPolicy() {
                 <div className="bg-white p-6 md:p-8 rounded shadow-sm border border-gray-100 max-w-5xl mx-auto text-gray-700 leading-relaxed space-y-6">
 
                     <p>
-                        At <strong>udyamregistrations.co.in</strong>, safeguarding the privacy of our users is one of our highest priorities. This Privacy Policy describes the types of information we collect from visitors, how that information is used, and the measures taken to protect it.
+                        At <strong>eudyogonline.com</strong>, safeguarding the privacy of our users is one of our highest priorities. This Privacy Policy describes the types of information we collect from visitors, how that information is used, and the measures taken to protect it.
                     </p>
 
                     <p>
@@ -61,7 +61,7 @@ export default function PrivacyPolicy() {
                     <div>
                         <h3 className="text-xl font-semibold text-gray-900 mb-3">Log Files</h3>
                         <p className="mb-2">
-                            Like many websites, udyamregistrations.co.in uses log files as part of its standard analytics and hosting operations. These files collect information such as IP addresses, browser types, ISP data, visit timestamps, referring pages, and click counts.
+                            Like many websites, eudyogonline.com uses log files as part of its standard analytics and hosting operations. These files collect information such as IP addresses, browser types, ISP data, visit timestamps, referring pages, and click counts.
                         </p>
                         <p className="mb-2">This data is not linked to personally identifiable information and is used solely to:</p>
                         <ul className="list-disc list-inside space-y-1 ml-2">

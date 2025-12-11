@@ -27,7 +27,7 @@ export default function AboutUs() {
 
                     <div className="bg-blue-50 p-6 rounded border border-blue-100">
                         <p className="font-semibold text-gray-800 mb-2">
-                            UDYAMREGISTRATIONS.CO.IN Website Is A Property Of (UNITED CONSULTANCY SERVICES), a Consultancy Firm, Providing Consultancy Services. We are a B2B Consulting Firm. We have served more than 2 lac happy & satisfied clients.
+                            eudyogonline.com Website Is A Property Of (UNITED CONSULTANCY SERVICES), a Consultancy Firm, Providing Consultancy Services. We are a B2B Consulting Firm. We have served more than 2 lac happy & satisfied clients.
                         </p>
                     </div>
 

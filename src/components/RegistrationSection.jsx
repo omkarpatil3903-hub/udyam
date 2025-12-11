@@ -366,14 +366,7 @@ export default function RegistrationSection() {
                                 <span className="font-bold">PAN Card Number :</span> Please Enter Your 10 Digit Pan Card Number. <br />
                                 <span className="text-gray-600">अपने १० अंको का पैन कार्ड नंबर दर्ज करें।</span>
                             </p>
-                            <p>
-                                <span className="font-bold">Bank Account Number :</span> Enter Your Bank Account Number. <br />
-                                <span className="text-gray-600">अपना बैंक खाता नंबर दर्ज करें |</span>
-                            </p>
-                            <p>
-                                <span className="font-bold">IFSC Code :</span> Please Enter The IFSC Code Of Your Bank Branch. <br />
-                                <span className="text-gray-600">अपने बैंक के ब्रांच का IFSC कोड दर्ज करे |</span>
-                            </p>
+
                             <p>
                                 <span className="font-bold">Date Of Commencement Of Business :</span> Mention The Date Your Business began Operations. <br />
                                 <span className="text-gray-600">व्यवसाय के प्रारंभ होने की तारीख दर्ज करें, जिसे प्रमाणपत्र पर उल्लिखित किया जाएगा।</span>
@@ -398,7 +391,7 @@ export default function RegistrationSection() {
                                 <span className="font-bold">Investment In Plant & Machinery / Equipment :</span> Enter The Total Investment Made By The Applicant In Plant Machinery, Equipment Etc. <br />
                                 <span className="text-gray-600">संयंत्र, मशीनरी, और उपकरण आदि में किए गए निवेश का योगदान करें।</span>
                             </p>
-                            <div className="mt-4 p-2 bg-yellow-100 border border-yellow-200 rounded text-[10px] text-gray-700">
+                            <div className="mt-4 p-2 bg-yellow-100 border border-yellow-200 rounded text-[13px] text-gray-700">
                                 <span className="font-bold">SUBMIT APPLICATION :</span> Once All Required Information Has Been Entered And Documents Have Been Attached Click On The “Submit Application” Button. <br />
                                 <span className="text-gray-600">कृपया सभी आवश्यक जानकारी और दस्तावेज जमा किए जाने पर "आवेदन सबमिट करें" बटन पर क्लिक करें।</span>
                             </div>

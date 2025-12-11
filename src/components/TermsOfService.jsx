@@ -46,7 +46,7 @@ export default function TermsOfService() {
                 {/* Terms and Conditions */}
                 <div className="mb-8">
                     <h3 className="text-xl font-bold text-gray-900 mb-4">Terms and Conditions</h3>
-                    <p className="text-gray-700 mb-2">Welcome to udyamregistrations.co.in</p>
+                    <p className="text-gray-700 mb-2">Welcome to eudyogonline.com</p>
                     <p className="text-gray-700 mb-4">
                         These terms and conditions outline the rules and regulations for the use of Udyamregister Website, located at{' '}
                         <Link to="/terms-of-service" className="text-blue-600 hover:underline">https://eudyogonline.com/terms-of-service</Link>
@@ -56,7 +56,7 @@ export default function TermsOfService() {
                         <li>
                             <strong>Acceptance of Terms</strong>
                             <p className="mt-1 text-gray-700">
-                                By accessing or using UdyamRegistrations.co.in, you agree to comply with and be bound by the following terms and conditions. Please don't use the website if you disagree with these terms.
+                                By accessing or using eudyogonline.com, you agree to comply with and be bound by the following terms and conditions. Please don't use the website if you disagree with these terms.
                             </p>
                         </li>
                         <li>
@@ -81,7 +81,7 @@ export default function TermsOfService() {
                             <strong>Privacy Policy</strong>
                             <p className="mt-1 text-gray-700">
                                 Your use of the website is also governed by our Privacy Policy, which can be accessed at{' '}
-                                <Link to="/privacy-policy" className="text-blue-600 hover:underline">http://eudyogonline.com/privacy-policy</Link>
+                                <Link to="/privacy-policy" className="text-blue-600 hover:underline">https://eudyogonline.com/privacy-policy</Link>
                             </p>
                         </li>
                         <li>

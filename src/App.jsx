@@ -11,7 +11,7 @@ import Header from "./components/Header";
 import Banner from "./components/Banner";
 import RegistrationSection from "./components/RegistrationSection";
 import SampleCertificate from "./components/SampleCertificate";
-import FAQsPage from "./components/FAQsPage";
+
 import ContactPage from "./components/ContactPage";
 import TermsOfService from "./components/TermsOfService";
 import UdyamDetails from "./components/UdyamDetails";
@@ -54,18 +54,7 @@ const SampleCertificateLayout = () => {
   );
 };
 
-// FAQs page layout
-const FAQsLayout = () => {
-  return (
-    <div className="min-h-screen flex flex-col font-sans text-gray-900 bg-white">
-      <Header />
-      <main className="flex-grow">
-        <FAQsPage />
-      </main>
-      <Footer />
-    </div>
-  );
-};
+
 
 // Terms of Service page layout
 const TermsOfServiceLayout = () => {
@@ -186,7 +175,7 @@ function AppContent({ isAdminLoggedIn, handleLogout, loading, authChecked }) {
       {/* Main Website Routes */}
       <Route path="/" element={<RegistrationLayout />} />
       <Route path="/samplecertificate" element={<SampleCertificateLayout />} />
-      <Route path="/faqs" element={<FAQsLayout />} />
+
       <Route path="/contact" element={<ContactLayout />} />
       <Route path="/terms-of-service" element={<TermsOfServiceLayout />} />
       <Route path="/privacy-policy" element={<PrivacyPolicyLayout />} />
