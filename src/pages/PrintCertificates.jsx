@@ -18,6 +18,8 @@ import {
   AlertCircle,
   IndianRupee,
   Hash,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import PrintCertificateViewModal from "../components/PrintCertificateViewModal";
 import AdminLayout from "../components/AdminLayout";
@@ -35,10 +37,16 @@ export default function PrintCertificates({ onLogout }) {
     itemId: "",
     newValue: "",
   });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [mainTab, workFilter, searchTerm]);
 
   useEffect(() => {
     const q = query(
-      collection(db, "printcertificates"),
+      collection(db, "print-certificates"),
       orderBy("timestamp", "desc")
     );
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -56,7 +64,7 @@ export default function PrintCertificates({ onLogout }) {
   const handlePaymentStatusUpdate = async (id, newStatus) => {
     try {
       if (!id) return;
-      const registrationRef = doc(db, "printcertificates", id);
+      const registrationRef = doc(db, "print-certificates", id);
       await updateDoc(registrationRef, { paymentStatus: newStatus });
       if (selectedRegistration && selectedRegistration.id === id) {
         setSelectedRegistration((prev) => ({
@@ -73,7 +81,7 @@ export default function PrintCertificates({ onLogout }) {
   const handleWorkStatusUpdate = async (id, newStatus) => {
     try {
       if (!id) return;
-      const registrationRef = doc(db, "printcertificates", id);
+      const registrationRef = doc(db, "print-certificates", id);
       await updateDoc(registrationRef, { workStatus: newStatus });
       if (selectedRegistration && selectedRegistration.id === id) {
         setSelectedRegistration((prev) => ({ ...prev, workStatus: newStatus }));
@@ -153,6 +161,12 @@ export default function PrintCertificates({ onLogout }) {
       i.workStatus === "Completed"
   ).length;
 
+  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+  const paginatedData = filteredData.slice(
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage
+  );
+
   return (
     <AdminLayout
       onLogout={onLogout}
@@ -175,11 +189,10 @@ export default function PrintCertificates({ onLogout }) {
             setMainTab("paid");
             setWorkFilter("all");
           }}
-          className={`bg-white rounded-2xl p-5 shadow-sm border cursor-pointer hover:shadow-lg transition-all duration-300 group ${
-            mainTab === "paid"
-              ? "border-emerald-300 ring-2 ring-emerald-100"
-              : "border-gray-100"
-          }`}
+          className={`bg-white rounded-2xl p-5 shadow-sm border cursor-pointer hover:shadow-lg transition-all duration-300 group ${mainTab === "paid"
+            ? "border-emerald-300 ring-2 ring-emerald-100"
+            : "border-gray-100"
+            }`}
         >
           <div className="flex items-start justify-between">
             <div>
@@ -202,11 +215,10 @@ export default function PrintCertificates({ onLogout }) {
             setMainTab("unpaid");
             setWorkFilter("all");
           }}
-          className={`bg-white rounded-2xl p-5 shadow-sm border cursor-pointer hover:shadow-lg transition-all duration-300 group ${
-            mainTab === "unpaid"
-              ? "border-orange-300 ring-2 ring-orange-100"
-              : "border-gray-100"
-          }`}
+          className={`bg-white rounded-2xl p-5 shadow-sm border cursor-pointer hover:shadow-lg transition-all duration-300 group ${mainTab === "unpaid"
+            ? "border-orange-300 ring-2 ring-orange-100"
+            : "border-gray-100"
+            }`}
         >
           <div className="flex items-start justify-between">
             <div>
@@ -237,31 +249,28 @@ export default function PrintCertificates({ onLogout }) {
               <div className="flex bg-gray-100 rounded-lg p-0.5 ml-2">
                 <button
                   onClick={() => setWorkFilter("all")}
-                  className={`px-2 py-1 rounded text-[10px] font-semibold transition-all ${
-                    workFilter === "all"
-                      ? "bg-white text-gray-800 shadow-sm"
-                      : "text-gray-500 hover:text-gray-700"
-                  }`}
+                  className={`px-2 py-1 rounded text-[10px] font-semibold transition-all ${workFilter === "all"
+                    ? "bg-white text-gray-800 shadow-sm"
+                    : "text-gray-500 hover:text-gray-700"
+                    }`}
                 >
                   All
                 </button>
                 <button
                   onClick={() => setWorkFilter("pending")}
-                  className={`px-2 py-1 rounded text-[10px] font-semibold transition-all ${
-                    workFilter === "pending"
-                      ? "bg-white text-blue-600 shadow-sm"
-                      : "text-gray-500 hover:text-gray-700"
-                  }`}
+                  className={`px-2 py-1 rounded text-[10px] font-semibold transition-all ${workFilter === "pending"
+                    ? "bg-white text-blue-600 shadow-sm"
+                    : "text-gray-500 hover:text-gray-700"
+                    }`}
                 >
                   Pending ({paidPendingCount})
                 </button>
                 <button
                   onClick={() => setWorkFilter("completed")}
-                  className={`px-2 py-1 rounded text-[10px] font-semibold transition-all ${
-                    workFilter === "completed"
-                      ? "bg-white text-emerald-600 shadow-sm"
-                      : "text-gray-500 hover:text-gray-700"
-                  }`}
+                  className={`px-2 py-1 rounded text-[10px] font-semibold transition-all ${workFilter === "completed"
+                    ? "bg-white text-emerald-600 shadow-sm"
+                    : "text-gray-500 hover:text-gray-700"
+                    }`}
                 >
                   Completed ({paidCompletedCount})
                 </button>
@@ -283,20 +292,18 @@ export default function PrintCertificates({ onLogout }) {
             {/* Column Headers */}
             <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-gray-50/50 text-xs font-bold text-gray-500 uppercase tracking-wider">
               <div className="col-span-2">Application ID</div>
-              <div className="col-span-2">Applicant</div>
-              <div className="col-span-2">Udyam Number</div>
+              <div className="col-span-4">Applicant</div>
               <div className="col-span-2">Contact</div>
               <div className="col-span-2">Status</div>
               <div className="col-span-2 text-right">Actions</div>
             </div>
 
             {/* Table Rows */}
-            {filteredData.map((item, index) => (
+            {paginatedData.map((item, index) => (
               <div
                 key={item.id}
-                className={`grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-blue-50/50 transition-colors group ${
-                  index % 2 === 0 ? "bg-white" : "bg-gray-50/30"
-                }`}
+                className={`grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-blue-50/50 transition-colors group ${index % 2 === 0 ? "bg-white" : "bg-gray-50/30"
+                  }`}
               >
                 <div className="col-span-2">
                   <p
@@ -307,7 +314,7 @@ export default function PrintCertificates({ onLogout }) {
                   </p>
                   <p className="text-xs text-gray-400 mt-0.5">{item.date}</p>
                 </div>
-                <div className="col-span-2">
+                <div className="col-span-4">
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-gray-600">
                       <User size={14} />
@@ -319,12 +326,6 @@ export default function PrintCertificates({ onLogout }) {
                       <p className="text-xs text-gray-400">{item.state}</p>
                     </div>
                   </div>
-                </div>
-                <div className="col-span-2">
-                  <p className="text-sm text-gray-700 font-mono flex items-center gap-1">
-                    <Hash size={12} className="text-gray-400" />
-                    {item.udyamNumber || "N/A"}
-                  </p>
                 </div>
                 <div className="col-span-2">
                   <p className="text-sm text-gray-700 font-mono">
@@ -347,11 +348,10 @@ export default function PrintCertificates({ onLogout }) {
                         onChange={(e) =>
                           handleListWorkStatusChange(item.id, e.target.value)
                         }
-                        className={`text-xs font-bold px-3 py-1.5 rounded-full cursor-pointer border-0 outline-none appearance-none pr-7 ${
-                          item.workStatus === "Completed"
-                            ? "bg-emerald-100 text-emerald-700"
-                            : "bg-blue-100 text-blue-700"
-                        }`}
+                        className={`text-xs font-bold px-3 py-1.5 rounded-full cursor-pointer border-0 outline-none appearance-none pr-7 ${item.workStatus === "Completed"
+                          ? "bg-emerald-100 text-emerald-700"
+                          : "bg-blue-100 text-blue-700"
+                          }`}
                         style={{
                           backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
                           backgroundRepeat: "no-repeat",
@@ -416,6 +416,54 @@ export default function PrintCertificates({ onLogout }) {
                 </p>
               </div>
             )}
+          </div>
+        </div>
+
+        {/* Pagination Controls */}
+        <div className="flex flex-col md:flex-row items-center justify-between px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-2xl mt-[-1rem] z-10 relative">
+          <div className="flex items-center gap-2 mb-4 md:mb-0">
+            <span className="text-xs text-gray-500 font-medium">Rows per page:</span>
+            <select
+              value={rowsPerPage}
+              onChange={(e) => {
+                setRowsPerPage(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+              className="text-xs bg-white border border-gray-200 rounded px-2 py-1 outline-none focus:border-blue-500 font-semibold text-gray-700"
+            >
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+            </select>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <span className="text-xs text-gray-500">
+              Page <span className="font-bold text-gray-800">{currentPage}</span> of{" "}
+              <span className="font-bold text-gray-800">{totalPages || 1}</span>
+            </span>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className={`p-1.5 rounded-lg border transition-all ${currentPage === 1
+                  ? "bg-gray-100 text-gray-300 border-gray-100 cursor-not-allowed"
+                  : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300 shadow-sm"
+                  }`}
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <button
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages || totalPages === 0}
+                className={`p-1.5 rounded-lg border transition-all ${currentPage === totalPages || totalPages === 0
+                  ? "bg-gray-100 text-gray-300 border-gray-100 cursor-not-allowed"
+                  : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300 shadow-sm"
+                  }`}
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -1,14 +1,31 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 import { statesAndDistricts } from '../data/statesDistricts';
 import SuccessModal from './SuccessModal';
 
 export default function RegistrationSection() {
+    const location = useLocation();
     const [isLoading, setIsLoading] = useState(false);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [submittedAppId, setSubmittedAppId] = useState('');
+
+    // Determine collection based on current route (form header stays the same)
+    const getCollectionName = () => {
+        switch (location.pathname) {
+            case '/udyam-re-registration':
+                return 're-registrations';
+            case '/update-certificate':
+                return 'update-certificates';
+            case '/print-certificate':
+                return 'print-certificates';
+            default:
+                return 'registrations';
+        }
+    };
+
+    const collectionName = getCollectionName();
     const [formData, setFormData] = useState({
         applicantName: '',
         mobile: '',
@@ -92,7 +109,7 @@ export default function RegistrationSection() {
 
             // Race the addDoc against the timeout
             const docRef = await Promise.race([
-                addDoc(collection(db, "registrations"), registrationData),
+                addDoc(collection(db, collectionName), registrationData),
                 timeout
             ]);
 

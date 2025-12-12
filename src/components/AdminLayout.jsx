@@ -34,16 +34,37 @@ export default function AdminLayout({
 
   const navItems = [
     {
-      id: "applications",
+      id: "registrations",
       label: "Registrations",
       icon: FileText,
       href: "/admin",
     },
+    {
+      id: "re-registrations",
+      label: "Re-Registrations",
+      icon: RefreshCw,
+      href: "/admin/re-registrations",
+    },
+    {
+      id: "update-certificates",
+      label: "Update Certificates",
+      icon: Edit,
+      href: "/admin/update-certificates",
+    },
+    {
+      id: "print-certificates",
+      label: "Print Certificates",
+      icon: Printer,
+      href: "/admin/print-certificates",
+    },
   ];
 
   const getActivePage = () => {
+    if (location.pathname === "/admin/re-registrations") return "re-registrations";
+    if (location.pathname === "/admin/update-certificates") return "update-certificates";
+    if (location.pathname === "/admin/print-certificates") return "print-certificates";
     if (location.pathname === "/admin/queries") return "queries";
-    return "applications";
+    return "registrations";
   };
   const activePage = getActivePage();
   const currentPage =
@@ -110,8 +131,8 @@ export default function AdminLayout({
                 to={item.href}
                 onClick={() => setIsSidebarOpen(false)}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive
-                    ? "bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-500/25"
-                    : "text-slate-400 hover:text-white hover:bg-white/5"
+                  ? "bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-500/25"
+                  : "text-slate-400 hover:text-white hover:bg-white/5"
                   }`}
               >
                 <Icon size={18} />

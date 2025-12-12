@@ -23,6 +23,9 @@ import SOP from "./components/SOP";
 import ShippingPolicy from "./components/ShippingPolicy";
 import Footer from "./components/Footer";
 import Registrations from "./pages/Registrations";
+import ReRegistrations from "./pages/ReRegistrations";
+import UpdateCertificates from "./pages/UpdateCertificates";
+import PrintCertificates from "./pages/PrintCertificates";
 import AdminLogin from "./pages/AdminLogin";
 
 // Registration page layout
@@ -200,10 +203,30 @@ function AppContent({ isAdminLoggedIn, handleLogout, loading, authChecked }) {
         }
       />
       <Route
-        path="/admin"
+        path="/admin/re-registrations"
         element={
           isAdminLoggedIn ? (
-            <Registrations onLogout={handleLogoutWithRedirect} />
+            <ReRegistrations onLogout={handleLogoutWithRedirect} />
+          ) : (
+            <AdminLogin />
+          )
+        }
+      />
+      <Route
+        path="/admin/update-certificates"
+        element={
+          isAdminLoggedIn ? (
+            <UpdateCertificates onLogout={handleLogoutWithRedirect} />
+          ) : (
+            <AdminLogin />
+          )
+        }
+      />
+      <Route
+        path="/admin/print-certificates"
+        element={
+          isAdminLoggedIn ? (
+            <PrintCertificates onLogout={handleLogoutWithRedirect} />
           ) : (
             <AdminLogin />
           )
