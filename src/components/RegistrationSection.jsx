@@ -98,6 +98,15 @@ export default function RegistrationSection() {
 
             console.log("Document successfully written with ID:", docRef.id); // Log success
 
+            // Track conversion in Google Ads
+            if (window.gtag) {
+                window.gtag('event', 'conversion', {
+                    'send_to': 'AW-17796798816/jEPbCIPv4s8bEOCylqZC',
+                    'value': 1.0,
+                    'currency': 'INR'
+                });
+            }
+
             // Show success modal instead of alert
             setSubmittedAppId(docRef.id);
             setShowSuccessModal(true);
