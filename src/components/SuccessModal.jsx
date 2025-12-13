@@ -1,7 +1,7 @@
 import React from 'react';
-import { CheckCircle, X, Copy, Check } from 'lucide-react';
+import { CheckCircle, X, Copy, Check, AlertTriangle } from 'lucide-react';
 
-export default function SuccessModal({ isOpen, onClose, applicationId }) {
+export default function SuccessModal({ isOpen, onClose, applicationId, paymentStatus = 'Paid' }) {
     const [copied, setCopied] = React.useState(false);
 
     if (!isOpen) return null;
@@ -45,6 +45,22 @@ export default function SuccessModal({ isOpen, onClose, applicationId }) {
                             <p className="text-xs text-emerald-600 text-center mt-2 font-medium">Copied to clipboard!</p>
                         )}
                     </div>
+
+                    {/* Payment Warning - Show if payment was not made */}
+                    {paymentStatus === 'Unpaid' && (
+                        <div className="mt-4 p-4 bg-orange-50 border-2 border-orange-300 rounded-lg">
+                            <div className="flex items-start gap-3">
+                                <AlertTriangle className="text-orange-600 flex-shrink-0 mt-0.5" size={20} />
+                                <div>
+                                    <p className="text-sm font-bold text-orange-800 mb-1">Payment Not Completed</p>
+                                    <p className="text-xs text-orange-700">
+                                        Your application has been submitted, but payment was not completed.
+                                        Our team will contact you to complete the payment process.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                     <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
                         <p className="text-xs text-amber-800 text-center">

@@ -1,0 +1,49 @@
+/* Custom styling for Cashfree payment modal */
+
+/* Customize Cashfree modal overlay background */
+#cashfree-overlay {
+    background-color: rgba(0, 0, 0, 0.6) !important;
+    /* Semi-transparent dark overlay */
+    backdrop-filter: blur(4px) !important;
+    /* Blur effect for modern look */
+}
+
+/* Customize Cashfree modal container */
+#cashfree-container {
+    border-radius: 12px !important;
+    /* Rounded corners */
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+    /* Elevated shadow */
+}
+
+/* Alternative: Light overlay for light-themed websites */
+/* Uncomment below if you prefer a lighter background */
+/*
+#cashfree-overlay {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(8px) !important;
+}
+*/
+
+/* Ensure modal appears above other elements */
+#cashfree-overlay,
+#cashfree-container {
+    z-index: 99999 !important;
+}
+
+/* Smooth fade-in animation for payment modal */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.2s ease-out;
+}

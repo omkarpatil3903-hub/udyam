@@ -8,8 +8,12 @@ import SuccessModal from './SuccessModal';
 export default function RegistrationSection() {
     const location = useLocation();
     const [isLoading, setIsLoading] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false); // Prevent duplicate submissions
+    const [loadingMessage, setLoadingMessage] = useState(''); // Message for loading overlay
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [submittedAppId, setSubmittedAppId] = useState('');
+    const [submittedPaymentStatus, setSubmittedPaymentStatus] = useState('Paid');
+    const [pendingRegistrationData, setPendingRegistrationData] = useState(null);
 
     // Determine collection based on current route (form header stays the same)
     const getCollectionName = () => {
@@ -80,27 +84,165 @@ export default function RegistrationSection() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        // CRITICAL: Prevent duplicate submissions
+        if (isSubmitting) {
+            console.warn('Payment already in progress, ignoring duplicate submission');
+            return;
+        }
+
         // Validate Captcha
         if (formData.verificationCode !== captchaCode) {
             alert("Invalid Verification Code! Please try again.");
             return;
         }
 
+        // Validate required fields for payment
+        if (!formData.applicantName || !formData.email || !formData.mobile) {
+            alert('Missing required customer information. Please fill out all required fields.');
+            return;
+        }
+
+        // Prepare registration data
+        const registrationData = {
+            ...formData,
+            totalEmployees: calculateTotalEmployees(),
+            date: new Date().toISOString().split('T')[0],
+        };
+
+        // Store pending data for later use
+        setPendingRegistrationData(registrationData);
+        setIsSubmitting(true); // Mark as submitting to prevent duplicates
         setIsLoading(true);
-        console.log("Submitting registration form..."); // Log start
+        setLoadingMessage('Opening payment gateway...'); // Show loading message
+
+        // Directly initiate payment
+        try {
+            const { initiateCashfreePayment, getPaymentAmount } = await import('../services/paymentService');
+            const registrationType = getRegistrationType();
+            const amount = getPaymentAmount(registrationType);
+
+            const paymentData = {
+                amount: amount,
+                customerName: registrationData.applicantName,
+                customerEmail: registrationData.email,
+                customerPhone: registrationData.mobile,
+                registrationType: registrationType,
+            };
+
+            // CRITICAL: Prevent race condition - only allow one callback to execute
+            let callbackExecuted = false;
+
+            await initiateCashfreePayment(
+                paymentData,
+                // Success callback - VERIFY payment before trusting client
+                async (result) => {
+                    // Race condition check - prevent duplicate execution
+                    if (callbackExecuted) {
+                        console.warn('Success callback ignored - another callback already executed');
+                        return;
+                    }
+                    callbackExecuted = true;
+
+                    try {
+                        setLoadingMessage('Processing payment...'); // Update loading message
+                        console.log('Payment success reported by client, verifying with server...');
+
+                        // CRITICAL: Verify payment with server before trusting client callback
+                        const { verifyPaymentStatus } = await import('../services/paymentService');
+                        const verification = await verifyPaymentStatus(result.orderId);
+
+                        console.log('Server verification result:', verification);
+
+                        // Only save as "Paid" if server confirms payment success
+                        if (verification.success && verification.status === 'PAID') {
+                            await handlePaymentSuccess({
+                                orderId: result.orderId,
+                                paymentDetails: result.paymentDetails,
+                                amount: amount,
+                            }, registrationData);
+                        } else {
+                            // Server says payment not successful - save as unpaid
+                            console.warn('Payment verification failed, saving as unpaid');
+                            setIsSubmitting(false); // Reset flag
+                            await handlePaymentSkip(registrationData);
+                        }
+                    } catch (verifyError) {
+                        console.error('Payment verification error:', verifyError);
+                        // If verification fails, save as unpaid to be safe
+                        setIsSubmitting(false); // Reset flag
+                        await handlePaymentSkip(registrationData);
+                    }
+                },
+                // Failure callback - ASYNC to properly handle data saving
+                async (error) => {
+                    // Race condition check - prevent duplicate execution
+                    if (callbackExecuted) {
+                        console.warn('Failure callback ignored - another callback already executed');
+                        return;
+                    }
+                    callbackExecuted = true;
+
+                    console.log('Payment error:', error); // Debug log
+
+                    try {
+                        // Automatically submit without payment when payment fails/is aborted
+                        // Pass registrationData directly instead of relying on state (which may not be updated yet)
+                        await handlePaymentSkip(registrationData);
+                    } catch (saveError) {
+                        console.error('Failed to save application after payment failure:', saveError);
+                        setIsLoading(false);
+                        alert('Failed to save your application. Please try again or contact support.\n\nError: ' + saveError.message);
+                    }
+                }
+            );
+        } catch (error) {
+            setIsLoading(false);
+            setIsSubmitting(false); // Reset on error
+            alert(error.message || 'Failed to initiate payment');
+        }
+    };
+
+    // Handle payment success - save registration with payment details
+    const handlePaymentSuccess = async (paymentDetails, dataToSave = null) => {
+        setIsLoading(true);
 
         try {
+            // Use provided data or fall back to state
             const registrationData = {
-                ...formData,
-                totalEmployees: calculateTotalEmployees(),
-                paymentStatus: 'Unpaid',  // Unpaid or Paid
-                workStatus: 'Pending',     // Pending or Completed (relevant when Paid)
-                date: new Date().toISOString().split('T')[0],
+                ...(dataToSave || pendingRegistrationData),
+                paymentStatus: 'Paid',
+                paymentId: paymentDetails.orderId,
+                paymentOrderId: paymentDetails.orderId, // Link to payment transaction
+                transactionId: paymentDetails.paymentDetails?.transactionId || '',
+                paymentAmount: paymentDetails.amount,
+                paymentMethod: paymentDetails.paymentDetails?.paymentMethod || '',
+                paymentDate: serverTimestamp(),
+                workStatus: 'Pending',
                 timestamp: serverTimestamp()
             };
 
-            console.log("Registration Data to be submitted:", registrationData); // Log data
+            // SECURITY: Log only non-sensitive fields (no PAN, email, phone, names)
+            console.log("Submitting registration:", {
+                paymentStatus: registrationData.paymentStatus,
+                paymentId: registrationData.paymentId,
+                workStatus: registrationData.workStatus,
+                registrationType: getRegistrationType(),
+                // Sensitive fields redacted: applicantName, email, mobile, pan, businessName
+            });
             console.log("Network Status:", navigator.onLine ? "Online" : "Offline");
+
+            // ERROR RECOVERY: Store payment details in localStorage before Firestore save
+            // If Firestore fails, user still has proof of payment
+            try {
+                localStorage.setItem('udyam_payment_backup', JSON.stringify({
+                    paymentId: registrationData.paymentId,
+                    paymentAmount: registrationData.paymentAmount,
+                    timestamp: new Date().toISOString(),
+                    customerEmail: registrationData.email,
+                }));
+            } catch (storageError) {
+                console.warn('Failed to backup payment to localStorage:', storageError);
+            }
 
             // Create a timeout promise
             const timeout = new Promise((_, reject) =>
@@ -113,7 +255,21 @@ export default function RegistrationSection() {
                 timeout
             ]);
 
-            console.log("Document successfully written with ID:", docRef.id); // Log success
+            console.log("Document successfully written with ID:", docRef.id);
+
+            // AUDIT TRAIL: Link payment transaction to registration
+            try {
+                const { updatePaymentTransaction } = await import('../services/paymentService');
+                await updatePaymentTransaction(paymentDetails.orderId, {
+                    registrationId: docRef.id,
+                    collectionName: collectionName,
+                });
+                console.log("Payment transaction linked to registration:", docRef.id);
+            } catch (linkError) {
+                console.error("Failed to link payment transaction:", linkError);
+                // Don't fail the registration if linking fails - it's non-critical
+                // Transaction will be linked via webhook instead
+            }
 
             // Track conversion in Google Ads
             if (window.gtag) {
@@ -124,8 +280,98 @@ export default function RegistrationSection() {
                 });
             }
 
-            // Show success modal instead of alert
+            // Clear payment backup from localStorage on successful save
+            try {
+                localStorage.removeItem('udyam_payment_backup');
+            } catch (e) {
+                console.warn('Failed to clear payment backup:', e);
+            }
+
+            // Reset form
+            setFormData({
+                applicantName: '', mobile: '', email: '', officeAddress: '', pincode: '', state: '', district: '',
+                socialCategory: '', orgType: '', pan: '', businessName: '',
+                commencementDate: '', mainActivity: '', additionalDetails: '',
+                employeesMale: '', employeesFemale: '', employeesOther: '', verificationCode: ''
+            });
+            setPendingRegistrationData(null);
+            generateCaptcha();
+
+            // Reset loading states BEFORE showing modal
+            setIsLoading(false);
+            setIsSubmitting(false);
+
+            // Show success modal
             setSubmittedAppId(docRef.id);
+            setSubmittedPaymentStatus('Paid');
+            setShowSuccessModal(true);
+
+        } catch (error) {
+            console.error("Error submitting document: ", error);
+
+            // ERROR RECOVERY: If save failed but payment succeeded, show payment ID
+            const paymentId = registrationData.paymentId;
+            const errorMessage = `Failed to save your application, but your payment was successful!\n\n` +
+                `IMPORTANT - Save this information:\n` +
+                `Payment ID: ${paymentId}\n` +
+                `Amount: ₹${registrationData.paymentAmount}\n\n` +
+                `Please contact support with this Payment ID to complete your registration.\n` +
+                `Support: ${registrationData.email || 'support@udyam.com'}\n\n` +
+                `Error: ${error.message}`;
+
+            alert(errorMessage);
+
+            // Don't reset form - keep data for retry
+            setIsLoading(false);
+            setIsSubmitting(false);
+            return; // Exit without resetting form
+        }
+    };
+
+    // Handle payment skip - save registration without payment
+    const handlePaymentSkip = async (dataToSave = null) => {
+        setIsLoading(true);
+
+        try {
+            // Use provided data or fall back to state
+            const registrationData = {
+                ...(dataToSave || pendingRegistrationData),
+                paymentStatus: 'Unpaid',
+                workStatus: 'Pending',
+                timestamp: serverTimestamp()
+            };
+
+            // SECURITY: Log only non-sensitive fields (no PAN, email, phone, names)
+            console.log("Saving registration without payment:", {
+                paymentStatus: registrationData.paymentStatus,
+                workStatus: registrationData.workStatus,
+                registrationType: getRegistrationType(),
+                // Sensitive fields redacted: applicantName, email, mobile, pan, businessName
+            });
+
+            const timeout = new Promise((_, reject) =>
+                setTimeout(() => reject(new Error("Firestore request timed out.")), 15000)
+            );
+
+            const docRef = await Promise.race([
+                addDoc(collection(db, collectionName), registrationData),
+                timeout
+            ]);
+
+            console.log("Document successfully written with ID:", docRef.id);
+
+            // Track conversion
+            if (window.gtag) {
+                window.gtag('event', 'conversion', {
+                    'send_to': 'AW-17796798816/jEPbCIPv4s8bEOCylqZC',
+                    'value': 1.0,
+                    'currency': 'INR'
+                });
+            }
+
+            // Show success modal
+            setSubmittedAppId(docRef.id);
+            setSubmittedPaymentStatus('Unpaid');
             setShowSuccessModal(true);
 
             // Reset form
@@ -135,14 +381,29 @@ export default function RegistrationSection() {
                 commencementDate: '', mainActivity: '', additionalDetails: '',
                 employeesMale: '', employeesFemale: '', employeesOther: '', verificationCode: ''
             });
-            generateCaptcha(); // Regenerate captcha after successful submission
+            setPendingRegistrationData(null);
+            generateCaptcha();
 
         } catch (error) {
             console.error("Error submitting document: ", error);
-            // Show the actual error message to the user/developer for easier debugging
             alert(`Error submitting application: ${error.message}`);
         } finally {
             setIsLoading(false);
+            setIsSubmitting(false); // Reset submission flag
+        }
+    };
+
+    // Get registration type for payment modal
+    const getRegistrationType = () => {
+        switch (location.pathname) {
+            case '/udyam-re-registration':
+                return 're-registration';
+            case '/update-certificate':
+                return 'update-certificate';
+            case '/print-certificate':
+                return 'print-certificate';
+            default:
+                return 'registration';
         }
     };
 
@@ -153,6 +414,7 @@ export default function RegistrationSection() {
                 isOpen={showSuccessModal}
                 onClose={() => setShowSuccessModal(false)}
                 applicationId={submittedAppId}
+                paymentStatus={submittedPaymentStatus}
             />
 
             <section className="container mx-auto px-2 py-8 font-sans">
@@ -162,8 +424,6 @@ export default function RegistrationSection() {
                 </h2> */}
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
-
-                    {/* Left Column: Registration Form (1 col) */}
                     <div className="bg-white border border-blue-100 shadow-md rounded overflow-hidden">
                         {/* Form Header */}
                         <div className="bg-orange-600 text-white text-center py-3 font-bold uppercase text-sm tracking-wide min-h-[72px] flex flex-col justify-center">
@@ -181,7 +441,7 @@ export default function RegistrationSection() {
                             {/* Row 2: Mobile */}
                             <div className="bg-[#fffbef] p-3 border border-orange-200 rounded-sm">
                                 <label className="block text-gray-800 font-bold mb-1">Mobile Number / मोबाइल संख्या <span className="text-red-600">*</span></label>
-                                <input name="mobile" value={formData.mobile} onChange={handleChange} required type="tel" className="w-full border border-gray-300 px-2 py-1.5 bg-[#fffaf4] focus:outline-none focus:border-blue-500 rounded-sm" />
+                                <input name="mobile" value={formData.mobile} onChange={handleChange} required type="tel" pattern="[0-9]{10}" maxLength="10" minLength="10" title="Mobile number must be exactly 10 digits" className="w-full border border-gray-300 px-2 py-1.5 bg-[#fffaf4] focus:outline-none focus:border-blue-500 rounded-sm" />
                             </div>
 
                             {/* Row 3: Email */}
@@ -200,7 +460,7 @@ export default function RegistrationSection() {
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-[#fffbef] p-3 border border-orange-200 rounded-sm">
                                 <div>
                                     <label className="block text-gray-800 font-bold mb-1">Pincode / पिन कोड <span className="text-red-600">*</span></label>
-                                    <input name="pincode" value={formData.pincode} onChange={handleChange} required type="number" className="w-full border border-gray-300 px-2 py-1.5 bg-[#fffaf4] focus:outline-none focus:border-blue-500 rounded-sm" />
+                                    <input name="pincode" value={formData.pincode} onChange={handleChange} required type="number" pattern="[0-9]{6}" maxLength="6" minLength="6" title="Pincode must be exactly 6 digits" className="w-full border border-gray-300 px-2 py-1.5 bg-[#fffaf4] focus:outline-none focus:border-blue-500 rounded-sm" />
                                 </div>
                                 <div>
                                     <label className="block text-gray-800 font-bold mb-1">State / राज्य <span className="text-red-600">*</span></label>
@@ -302,15 +562,15 @@ export default function RegistrationSection() {
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                     <div>
                                         <span className="block text-xs mb-1">Male / पुरुष</span>
-                                        <input name="employeesMale" value={formData.employeesMale} onChange={handleChange} type="number" className="w-full border border-gray-300 px-2 py-1 rounded-sm" />
+                                        <input name="employeesMale" value={formData.employeesMale} onChange={handleChange} type="number" min="0" className="w-full border border-gray-300 px-2 py-1 rounded-sm" />
                                     </div>
                                     <div>
                                         <span className="block text-xs mb-1">Female / महिला</span>
-                                        <input name="employeesFemale" value={formData.employeesFemale} onChange={handleChange} type="number" className="w-full border border-gray-300 px-2 py-1 rounded-sm" />
+                                        <input name="employeesFemale" value={formData.employeesFemale} onChange={handleChange} type="number" min="0" className="w-full border border-gray-300 px-2 py-1 rounded-sm" />
                                     </div>
                                     <div>
                                         <span className="block text-xs mb-1">Other / अन्य</span>
-                                        <input name="employeesOther" value={formData.employeesOther} onChange={handleChange} type="number" className="w-full border border-gray-300 px-2 py-1 rounded-sm" />
+                                        <input name="employeesOther" value={formData.employeesOther} onChange={handleChange} type="number" min="0" className="w-full border border-gray-300 px-2 py-1 rounded-sm" />
                                     </div>
                                     <div>
                                         <span className="block text-xs mb-1">Total / संपूर्ण</span>
@@ -423,9 +683,20 @@ export default function RegistrationSection() {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div >
 
-            </section>
+            </section >
+
+            {/* Loading Spinner Overlay */}
+            {isLoading && loadingMessage && (
+                <div className="fixed inset-0 bg-white/95 flex items-center justify-center z-50">
+                    <div className="flex flex-col items-center">
+                        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mb-4"></div>
+                        <p className="text-gray-800 font-semibold text-lg">{loadingMessage}</p>
+                        <p className="text-gray-600 text-sm mt-1">Please wait...</p>
+                    </div>
+                </div>
+            )}
         </>
     );
 }
