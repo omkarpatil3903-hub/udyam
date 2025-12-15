@@ -72,13 +72,13 @@ exports.createPaymentOrder = onCall(async (request) => {
 
     // CRITICAL: Validate amount matches registration type (prevent tampering)
     const VALID_AMOUNTS = {
-      "registration": 500,
-      "re-registration": 300,
-      "update-certificate": 200,
-      "print-certificate": 100,
+      "registration": 1,
+      "re-registration": 1,
+      "update-certificate": 1,
+      "print-certificate": 1,
     };
 
-    const expectedAmount = VALID_AMOUNTS[registrationType] || 500;
+    const expectedAmount = VALID_AMOUNTS[registrationType] || 1;
     
     if (amount !== expectedAmount) {
       console.error(`Amount validation failed: expected ${expectedAmount} for ${registrationType}, got ${amount}`);

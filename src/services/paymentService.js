@@ -162,11 +162,11 @@ export const updatePaymentTransaction = async (orderId, data) => {
 export const getPaymentAmount = (registrationType) => {
   // You can configure these amounts
   const amounts = {
-    "registration": 500,
-    "re-registration": 300,
-    "update-certificate": 200,
-    "print-certificate": 100,
+    "registration": 1,
+    "re-registration": 1,
+    "update-certificate": 1,
+    "print-certificate": 1,
   };
   
-  return amounts[registrationType] || 500;
+  return amounts[registrationType] || 1;
 };
