@@ -6,6 +6,7 @@ import {
   orderBy,
   doc,
   updateDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import { db } from "../firebase";
 import {
@@ -20,6 +21,7 @@ import {
   Hash,
   ChevronLeft,
   ChevronRight,
+  Trash2,
 } from "lucide-react";
 import ReRegistrationViewModal from "../components/ReRegistrationViewModal";
 import AdminLayout from "../components/AdminLayout";
@@ -92,6 +94,21 @@ export default function ReRegistrations({ onLogout }) {
     }
   };
 
+  const handleDelete = async (id) => {
+    try {
+      if (!id) return;
+      const registrationRef = doc(db, "re-registrations", id);
+      await deleteDoc(registrationRef);
+      if (selectedRegistration && selectedRegistration.id === id) {
+        setIsViewModalOpen(false);
+        setSelectedRegistration(null);
+      }
+    } catch (error) {
+      console.error("Error deleting registration:", error);
+      alert("Failed to delete registration");
+    }
+  };
+
   const handleListWorkStatusChange = (itemId, newValue) => {
     const currentItem = registrations.find((r) => r.id === itemId);
     const currentValue = currentItem?.workStatus || "Pending";
@@ -104,6 +121,10 @@ export default function ReRegistrations({ onLogout }) {
     setConfirmModal({ isOpen: true, type: "payment", itemId, newValue });
   };
 
+  const handleListDelete = (itemId) => {
+    setConfirmModal({ isOpen: true, type: "delete", itemId, newValue: "" });
+  };
+
   const confirmListStatusChange = async () => {
     const { type, itemId, newValue } = confirmModal;
     setConfirmModal({ isOpen: false, type: "", itemId: "", newValue: "" });
@@ -112,6 +133,8 @@ export default function ReRegistrations({ onLogout }) {
       await handlePaymentStatusUpdate(itemId, newValue);
     } else if (type === "work") {
       await handleWorkStatusUpdate(itemId, newValue);
+    } else if (type === "delete") {
+      await handleDelete(itemId);
     }
   };
 
@@ -373,31 +396,55 @@ export default function ReRegistrations({ onLogout }) {
                     <Eye size={14} />
                     View
                   </button>
-                  {mainTab === "unpaid" && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleListPaymentStatusChange(item.id, "Paid");
-                      }}
-                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors"
-                    >
-                      <CreditCard size={14} />
-                      Mark Paid
-                    </button>
-                  )}
-                  {mainTab === "paid" &&
-                    (item.workStatus || "Pending") !== "Completed" && (
+                  {mainTab === "unpaid" ? (
+                    <>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleWorkStatusUpdate(item.id, "Completed");
+                          handleListPaymentStatusChange(item.id, "Paid");
                         }}
-                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors"
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors whitespace-nowrap"
                       >
-                        <CheckCircle size={14} />
-                        Complete
+                        <CreditCard size={14} />
+                        Mark Paid
                       </button>
-                    )}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleListDelete(item.id);
+                        }}
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
+                      >
+                        <Trash2 size={14} />
+                        Delete
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      {(item.workStatus || "Pending") !== "Completed" && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleListWorkStatusChange(item.id, "Completed");
+                          }}
+                          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors"
+                        >
+                          <CheckCircle size={14} />
+                          Complete
+                        </button>
+                      )}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleListDelete(item.id);
+                        }}
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
+                      >
+                        <Trash2 size={14} />
+                        Delete
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
             ))}
@@ -477,18 +524,28 @@ export default function ReRegistrations({ onLogout }) {
                 <AlertCircle className="w-8 h-8 text-orange-600" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">
-                Confirm Status Change
+                {confirmModal.type === "delete" ? "Confirm Delete" : "Confirm Status Change"}
               </h3>
               <p className="text-sm text-gray-600 mb-8 leading-relaxed">
-                Are you sure you want to change the{" "}
-                <span className="font-semibold text-gray-800">
-                  {confirmModal.type === "payment" ? "payment" : "work"}
-                </span>{" "}
-                status to{" "}
-                <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 rounded-full font-bold text-xs mt-1">
-                  {confirmModal.newValue}
-                </span>
-                ?
+                {confirmModal.type === "delete" ? (
+                  <>
+                    Are you sure you want to{" "}
+                    <span className="font-semibold text-red-600">permanently delete</span>{" "}
+                    this application? This action cannot be undone.
+                  </>
+                ) : (
+                  <>
+                    Are you sure you want to change the{" "}
+                    <span className="font-semibold text-gray-800">
+                      {confirmModal.type === "payment" ? "payment" : "work"}
+                    </span>{" "}
+                    status to{" "}
+                    <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 rounded-full font-bold text-xs mt-1">
+                      {confirmModal.newValue}
+                    </span>
+                    ?
+                  </>
+                )}
               </p>
               <div className="flex gap-3">
                 <button
@@ -499,9 +556,12 @@ export default function ReRegistrations({ onLogout }) {
                 </button>
                 <button
                   onClick={confirmListStatusChange}
-                  className="flex-1 px-4 py-3 bg-linear-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 hover:shadow-lg"
+                  className={`flex-1 px-4 py-3 font-semibold rounded-lg transition-all duration-200 hover:shadow-lg ${confirmModal.type === "delete"
+                    ? "bg-gradient-to-r from-red-600 to-red-700 text-white hover:from-red-700 hover:to-red-800"
+                    : "bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800"
+                    }`}
                 >
-                  Confirm
+                  {confirmModal.type === "delete" ? "Delete" : "Confirm"}
                 </button>
               </div>
             </div>

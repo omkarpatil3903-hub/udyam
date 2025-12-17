@@ -72,13 +72,13 @@ exports.createPaymentOrder = onCall(async (request) => {
 
     // CRITICAL: Validate amount matches registration type (prevent tampering)
     const VALID_AMOUNTS = {
-      "registration": 1,
-      "re-registration": 1,
-      "update-certificate": 1,
-      "print-certificate": 1,
+      "registration": 1531,
+      "re-registration": 1531,
+      "update-certificate": 1531,
+      "print-certificate": 1531,
     };
 
-    const expectedAmount = VALID_AMOUNTS[registrationType] || 1;
+    const expectedAmount = VALID_AMOUNTS[registrationType] || 1531;
     
     if (amount !== expectedAmount) {
       console.error(`Amount validation failed: expected ${expectedAmount} for ${registrationType}, got ${amount}`);
@@ -172,37 +172,79 @@ exports.createPaymentOrder = onCall(async (request) => {
 });
 
 /**
- * HTTPS Function: Verify Payment Webhook
- * Called by Cashfree when payment status changes
+ * Verify Cashfree webhook signature
+ * @param {string} rawBody - Raw request body as string
+ * @param {string} signature - Signature from webhook header
+ * @param {string} timestamp - Timestamp from webhook header
+ * @returns {boolean} True if signature is valid
+ */
+const verifyWebhookSignature = (rawBody, signature, timestamp) => {
+  try {
+    const config = getCashfreeConfig();
+    
+    if (!signature || !timestamp) {
+      console.error('Missing signature or timestamp in webhook headers');
+      return false;
+    }
+    
+    // Cashfree signature format: timestamp + rawBody
+    const signatureString = timestamp + rawBody;
+    
+    // Compute HMAC-SHA256 signature
+    const computedSignature = crypto
+      .createHmac('sha256', config.secretKey)
+      .update(signatureString)
+      .digest('base64');
+    
+    // Compare signatures (timing-safe comparison)
+    const isValid = crypto.timingSafeEqual(
+      Buffer.from(signature),
+      Buffer.from(computedSignature)
+    );
+    
+    if (!isValid) {
+      console.error('Webhook signature mismatch');
+      console.error('Expected:', computedSignature);
+      console.error('Received:', signature);
+    }
+    
+    return isValid;
+  } catch (error) {
+    console.error('Error verifying webhook signature:', error);
+    return false;
+  }
+};
+
+/**
+ * HTTP Function: Verify Payment Webhook
+ * Receives webhook notifications from Cashfree
  */
 exports.verifyPaymentWebhook = onRequest(async (req, res) => {
   try {
     // Only accept POST requests
-    if (req.method !== "POST") {
-      res.status(405).send("Method Not Allowed");
+    if (req.method !== 'POST') {
+      res.status(405).send('Method Not Allowed');
       return;
     }
 
-    const config = getCashfreeConfig();
+    // Get webhook data
     const webhookData = req.body;
     
-    // Verify webhook signature (important for security)
-    const signature = req.headers["x-webhook-signature"];
-    const timestamp = req.headers["x-webhook-timestamp"];
+    // Get raw body for signature verification (reconstruct from parsed body)
+    const rawBody = JSON.stringify(webhookData);
     
-    if (signature && timestamp) {
-      const signatureData = `${timestamp}${JSON.stringify(webhookData)}`;
-      const expectedSignature = crypto
-        .createHmac("sha256", config.secretKey)
-        .update(signatureData)
-        .digest("base64");
-      
-      if (signature !== expectedSignature) {
-        console.error("Invalid webhook signature");
-        res.status(401).send("Invalid signature");
-        return;
-      }
+    // Get signature and timestamp from headers
+    const signature = req.headers['x-webhook-signature'];
+    const timestamp = req.headers['x-webhook-timestamp'];
+    
+    // SECURITY: Verify webhook signature
+    if (!verifyWebhookSignature(rawBody, signature, timestamp)) {
+      console.error('Invalid webhook signature - possible attack attempt');
+      res.status(401).send('Unauthorized - Invalid signature');
+      return;
     }
+    
+    console.log('✅ Webhook signature verified successfully');
 
     console.log("Webhook received:", webhookData);
 

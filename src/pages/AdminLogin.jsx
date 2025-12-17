@@ -12,6 +12,7 @@ import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
 
+
 export default function AdminLogin() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -19,6 +20,7 @@ export default function AdminLogin() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
 
   // Check if already logged in - redirect to admin dashboard
   useEffect(() => {
@@ -203,8 +205,8 @@ export default function AdminLogin() {
                   type="submit"
                   disabled={isLoading}
                   className={`w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 ${isLoading
-                      ? "opacity-70 cursor-not-allowed"
-                      : "hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-0.5"
+                    ? "opacity-70 cursor-not-allowed"
+                    : "hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-0.5"
                     }`}
                 >
                   {isLoading ? (
@@ -255,3 +257,4 @@ export default function AdminLogin() {
     </div>
   );
 }
+

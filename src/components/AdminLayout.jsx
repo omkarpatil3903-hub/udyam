@@ -12,8 +12,10 @@ import {
   Menu,
   X,
   HelpCircle,
+  Key,
 } from "lucide-react";
 import { auth } from "../firebase";
+import ChangePasswordModal from "./ChangePasswordModal";
 
 export default function AdminLayout({
   children,
@@ -24,6 +26,7 @@ export default function AdminLayout({
 }) {
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
 
   const handleLogoutClick = () => {
     const confirmLogout = window.confirm("Are you sure you want to logout?");
@@ -160,6 +163,15 @@ export default function AdminLayout({
               </p>
             </div>
           </div>
+
+          <button
+            onClick={() => setIsChangePasswordOpen(true)}
+            className="w-full flex items-center justify-center gap-2 text-slate-400 hover:text-white px-4 py-2.5 rounded-lg hover:bg-white/5 border border-white/10 transition-all text-sm mb-2"
+          >
+            <Key size={16} />
+            <span>Change Password</span>
+          </button>
+
           <button
             onClick={handleLogoutClick}
             className="w-full flex items-center justify-center gap-2 text-slate-400 hover:text-white px-4 py-2.5 rounded-lg hover:bg-white/5 border border-white/10 transition-all text-sm"
@@ -171,6 +183,11 @@ export default function AdminLayout({
       </aside>
 
       {/* Main Content */}
+      {/* Change Password Modal */}
+      <ChangePasswordModal
+        isOpen={isChangePasswordOpen}
+        onClose={() => setIsChangePasswordOpen(false)}
+      />
       <main className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
         <header className="bg-white/70 backdrop-blur-xl border-b border-gray-200/50 h-16 px-4 lg:px-6 flex justify-between items-center sticky top-0 z-20">

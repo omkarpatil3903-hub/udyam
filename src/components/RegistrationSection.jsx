@@ -244,9 +244,9 @@ export default function RegistrationSection() {
                 console.warn('Failed to backup payment to localStorage:', storageError);
             }
 
-            // Create a timeout promise
+            // Create a timeout promise (60 seconds for slow connections)
             const timeout = new Promise((_, reject) =>
-                setTimeout(() => reject(new Error("Firestore request timed out. Check your network connection or Firebase configuration.")), 15000)
+                setTimeout(() => reject(new Error("Firestore request timed out. Check your network connection or Firebase configuration.")), 60000)
             );
 
             // Race the addDoc against the timeout
@@ -349,8 +349,9 @@ export default function RegistrationSection() {
                 // Sensitive fields redacted: applicantName, email, mobile, pan, businessName
             });
 
+            // Create a timeout promise (60 seconds for slow connections)
             const timeout = new Promise((_, reject) =>
-                setTimeout(() => reject(new Error("Firestore request timed out.")), 15000)
+                setTimeout(() => reject(new Error("Firestore request timed out.")), 60000)
             );
 
             const docRef = await Promise.race([
