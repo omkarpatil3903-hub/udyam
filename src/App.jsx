@@ -34,7 +34,7 @@ const RegistrationLayout = () => {
     <div className="min-h-screen flex flex-col font-sans text-gray-900 bg-white">
       <Header />
       <main className="flex-grow">
-        <Banner />
+        {/* <Banner /> */}
         <RegistrationSection />
         <UdyamDetails />
         <StandardOperatingProcedure />

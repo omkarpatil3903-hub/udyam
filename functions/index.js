@@ -50,9 +50,9 @@ exports.createPaymentOrder = onCall(async (request) => {
     console.log("Received data from frontend:", data);
     
     // Validate input
-    const { amount, customerName, customerEmail, customerPhone, registrationType } = data;
+    const { amount, customerName, customerEmail, customerPhone, registrationType, registrationId, collectionName } = data;
     
-    console.log("Extracted fields:", { amount, customerName, customerEmail, customerPhone, registrationType });
+    console.log("Extracted fields:", { amount, customerName, customerEmail, customerPhone, registrationType, registrationId, collectionName });
     
     if (!amount || !customerName || !customerEmail || !customerPhone) {
       console.error("Validation failed - missing fields");
@@ -140,6 +140,8 @@ exports.createPaymentOrder = onCall(async (request) => {
       customerEmail: customerEmail,
       customerPhone: customerPhone,
       registrationType: registrationType || "registration",
+      registrationId: registrationId || null,
+      collectionName: collectionName || "registrations",
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
       cashfreeResponse: response.data, // Only store the data, not the entire response object
@@ -360,6 +362,29 @@ exports.getPaymentStatus = onCall(async (request) => {
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
       lastChecked: admin.firestore.FieldValue.serverTimestamp(),
     });
+
+    // Securely update the registration document if payment is successful
+    if (response.data.order_status === "PAID" || response.data.order_status === "SUCCESS") {
+      const transactionDoc = await transactionRef.get();
+      const transaction = transactionDoc.data();
+
+      if (transaction && transaction.registrationId && transaction.collectionName) {
+        try {
+           const registrationRef = db.collection(transaction.collectionName).doc(transaction.registrationId);
+           await registrationRef.update({
+             paymentStatus: "Paid",
+             paymentId: orderId,
+             transactionId: response.data.payment_session_id || "", // Use session id or find transaction id if available in details
+             paymentAmount: response.data.order_amount,
+             paymentDate: admin.firestore.FieldValue.serverTimestamp(),
+             updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+           });
+           console.log(`Registration ${transaction.registrationId} securely updated to Paid via getPaymentStatus`);
+        } catch (updateError) {
+           console.error("Failed to update registration status:", updateError);
+        }
+      }
+    }
 
     return {
       success: true,

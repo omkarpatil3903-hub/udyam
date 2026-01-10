@@ -61,6 +61,8 @@ export const initiateCashfreePayment = async (paymentData, onSuccess, onFailure)
       customerEmail: paymentData.customerEmail,
       customerPhone: paymentData.customerPhone,
       registrationType: paymentData.registrationType,
+      registrationId: paymentData.docId, // Pass registration ID
+      collectionName: paymentData.collectionName, // Pass collection name
       returnUrl: window.location.origin, // Not used in modal mode, but required by API
     });
 
@@ -168,5 +170,5 @@ export const getPaymentAmount = (registrationType) => {
     "print-certificate": 1531,
   };
   
-  return amounts[registrationType] || 1531;
+  return amounts[registrationType] || 1531 ;
 };
