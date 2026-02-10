@@ -154,21 +154,27 @@ export default function Header() {
       </div>
 
       {/* Taglines Section - Below Navigation Bar */}
-      <div className="bg-white py-3 px-4">
-        <div className="container mx-auto max-w-4xl">
-          <div className="space-y-2">
-            <p className="text-blue-900 font-semibold text-base md:text-lg text-center leading-relaxed">
-              We offer professional, private assistance for MSME/Udyam
-              registration, trusted by clients nationwide, with full support
-              through approval
-            </p>
-            <p className="text-green-700 font-bold text-base md:text-lg text-center leading-relaxed flex items-center justify-center space-x-2">
-              <span className="text-2xl">✓</span>
+      <div className="notice-strip py-3 px-4">
+        <div className="container mx-auto max-w-6xl space-y-2">
+          <div className="notice-row">
+            <div className="notice-track notice-track--slow">
               <span>
-                Get Your MSME/Udyam Certificate in Same Day – Full Support Till
-                Approval
+                We offer professional, private assistance for MSME/Udyam
+                registration, trusted by clients nationwide, with full support
+                through approval
               </span>
-            </p>
+              <span aria-hidden="true">
+                We offer professional, private assistance for MSME/Udyam
+                registration, trusted by clients nationwide, with full support
+                through approval
+              </span>
+            </div>
+          </div>
+          <div className="notice-row">
+            <div className="notice-track notice-track--fast notice-track--accent">
+              <span>✓ Get Your MSME/Udyam Certificate in Same Day - Full Support Till Approval</span>
+              <span aria-hidden="true">✓ Get Your MSME/Udyam Certificate in Same Day - Full Support Till Approval</span>
+            </div>
           </div>
         </div>
       </div>

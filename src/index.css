@@ -1,1 +1,68 @@
 @import "tailwindcss";
+
+:root {
+	--notice-bg: linear-gradient(90deg, #f4fbff 0%, #f6fff7 50%, #f4fbff 100%);
+	--notice-text: #1e3a8a;
+	--notice-accent: #15803d;
+}
+
+.notice-strip {
+	background: var(--notice-bg);
+}
+
+.notice-row {
+	position: relative;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.notice-track {
+	display: inline-flex;
+	align-items: center;
+	gap: 2rem;
+	color: var(--notice-text);
+	font-weight: 600;
+	font-size: 1rem;
+	line-height: 1.5;
+	padding: 0.15rem 0;
+	animation: notice-scroll 26s linear infinite;
+}
+
+.notice-track--accent {
+	color: var(--notice-accent);
+	font-weight: 700;
+}
+
+.notice-track--slow {
+	animation-duration: 28s;
+}
+
+.notice-track--fast {
+	animation-duration: 22s;
+}
+
+.notice-track span {
+	display: inline-block;
+	padding-right: 2rem;
+}
+
+@keyframes notice-scroll {
+	0% {
+		transform: translateX(0%);
+	}
+	100% {
+		transform: translateX(-50%);
+	}
+}
+
+@media (min-width: 768px) {
+	.notice-track {
+		font-size: 1.1rem;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.notice-track {
+		animation: none;
+	}
+}
