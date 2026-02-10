@@ -134,7 +134,7 @@ export default function RegistrationSection() {
     // Validate required fields for payment
     if (!formData.applicantName || !formData.email || !formData.mobile) {
       alert(
-        "Missing required customer information. Please fill out all required fields."
+        "Missing required customer information. Please fill out all required fields.",
       );
       return;
     }
@@ -157,9 +157,8 @@ export default function RegistrationSection() {
       // STEP 2: Initiate Payment
       setLoadingMessage("Opening payment gateway...");
 
-      const { initiateCashfreePayment, getPaymentAmount } = await import(
-        "../services/paymentService"
-      );
+      const { initiateCashfreePayment, getPaymentAmount } =
+        await import("../services/paymentService");
       const registrationType = getRegistrationType();
       const amount = getPaymentAmount(registrationType);
 
@@ -187,9 +186,8 @@ export default function RegistrationSection() {
             console.log("Payment success, verifying...");
 
             // Verify with server
-            const { verifyPaymentStatus } = await import(
-              "../services/paymentService"
-            );
+            const { verifyPaymentStatus } =
+              await import("../services/paymentService");
             const verification = await verifyPaymentStatus(result.orderId);
 
             if (verification.success && verification.status === "PAID") {
@@ -201,7 +199,7 @@ export default function RegistrationSection() {
             } else {
               console.warn("Payment verification failed");
               alert(
-                "Payment verification failed. Your application is saved as Unpaid."
+                "Payment verification failed. Your application is saved as Unpaid.",
               );
               // No need to "handlePaymentSkip" because it's already saved as Unpaid
               setSubmittedAppId(docId);
@@ -212,7 +210,7 @@ export default function RegistrationSection() {
             console.error("Payment verification error:", verifyError);
             alert(
               "Payment verification error. Your application is saved as Unpaid. Error: " +
-                verifyError.message
+                verifyError.message,
             );
             setSubmittedAppId(docId);
             setSubmittedPaymentStatus("Unpaid");
@@ -243,14 +241,14 @@ export default function RegistrationSection() {
           // For "Unpaid", maybe we want them to try paying again?
           // For now, let's treat it as "Application Received"
           resetForm();
-        }
+        },
       );
     } catch (error) {
       console.error("Error in submission flow:", error);
       setIsLoading(false);
       setIsSubmitting(false);
       alert(
-        "Failed to submit application: " + (error.message || "Unknown error")
+        "Failed to submit application: " + (error.message || "Unknown error"),
       );
     }
   };
@@ -337,7 +335,7 @@ export default function RegistrationSection() {
         paymentStatus={submittedPaymentStatus}
       />
 
-      <section className="container mx-auto px-2 py-8 font-sans">
+      <section className="container mx-auto px-2 py-4 font-sans">
         {/* Section Title
                 <h2 className="text-2xl md:text-3xl font-bold text-center text-blue-800 mb-6 uppercase tracking-wide">
                     Udyam Registration Portal

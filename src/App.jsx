@@ -36,7 +36,7 @@ const RegistrationLayout = () => {
       <main className="flex-grow">
         {/* <Banner /> */}
         <RegistrationSection />
-        <UdyamDetails />
+        {/* <UdyamDetails /> */}
         <StandardOperatingProcedure />
       </main>
       <Footer />
@@ -56,8 +56,6 @@ const SampleCertificateLayout = () => {
     </div>
   );
 };
-
-
 
 // Terms of Service page layout
 const TermsOfServiceLayout = () => {
@@ -185,11 +183,13 @@ function AppContent({ isAdminLoggedIn, handleLogout, loading, authChecked }) {
       <Route path="/contact" element={<ContactLayout />} />
       <Route path="/terms-of-service" element={<TermsOfServiceLayout />} />
       <Route path="/privacy-policy" element={<PrivacyPolicyLayout />} />
-      <Route path="/cancellation-refund-policy" element={<CancellationRefundPolicyLayout />} />
+      <Route
+        path="/cancellation-refund-policy"
+        element={<CancellationRefundPolicyLayout />}
+      />
       <Route path="/about-us" element={<AboutUsLayout />} />
       <Route path="/sop" element={<SOPLayout />} />
       <Route path="/shipping-policy" element={<ShippingPolicyLayout />} />
-
 
       {/* Admin Routes */}
       <Route

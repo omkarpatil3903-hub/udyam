@@ -77,6 +77,15 @@ export default function StandardOperatingProcedure() {
 
                 </div>
             </div>
+
+            <div className="mt-6 bg-white border border-gray-200 rounded-lg px-5 py-4 text-center text-gray-700 text-sm md:text-base leading-relaxed">
+                <p>
+                    All Rights Reserved | By using this website, you agree to our Terms & Conditions, Refund and Privacy Policy.
+                </p>
+                <p className="mt-2">
+                    This site is owned by a Private Organization & fee charged by us is our Professional fee.
+                </p>
+            </div>
         </section>
     );
 }
