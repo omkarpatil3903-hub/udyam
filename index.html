@@ -1,34 +1,36 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Udyam Registration</title>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Udyam Registration</title>
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=AW-17944262719"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
 
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17864779305"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() {
-      dataLayer.push(arguments);
-    }
-    gtag("js", new Date());
+      gtag("config", "AW-17944262719");
+    </script>
+    <!-- Event snippet for Submit lead form conversion page -->
+    <script>
+      gtag("event", "conversion", {
+        send_to: "AW-17944262719/ZCvfCKe8qvYbEL_wvuxC",
+        value: 1.0,
+        currency: "INR",
+      });
+    </script>
+  </head>
 
-    gtag("config", "AW-17864779305");
-
-    // Conversion event (fires on page load)
-    gtag("event", "conversion", {
-      send_to: "AW-17864779305/qGOkCO-gkuAbEKnMy8ZC",
-      value: 1.0,
-      currency: "INR",
-    });
-  </script>
-</head>
-
-<body>
-  <div id="root"></div>
-  <script type="module" src="/src/main.jsx"></script>
-</body>
-
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>
